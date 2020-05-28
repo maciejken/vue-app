@@ -2,31 +2,20 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import App from './App';
 import store from './store';
-import LoginForm from './components/LoginForm';
-import Home from './components/Home';
+import router from './router';
 
 Vue.use(VueRouter);
 
-export const router = new VueRouter({
-  mode: 'history',
-  routes: [
-    {
-      path: '/',
-      name: 'Home',
-      component: Home,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      component: LoginForm,
-      meta: {
-        requiresAuth: false
-      }
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(r => r.meta.requiresAuth)) {
+    if (!store.getters.isLoggedIn) {
+      next({ path: '/login' });
+    } else {
+      next();
     }
-  ]
+  } else {
+    next();
+  }
 });
 
 new Vue({

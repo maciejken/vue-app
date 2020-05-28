@@ -1,17 +1,5 @@
 import authGateway from '../../gateways/auth-gateway';
-import { router } from '../../main';
-
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(r => r.meta.requiresAuth)) {
-    if (!store.getters.isLoggedIn) {
-      next({ path: '/login' });
-    } else {
-      next();
-    }
-  } else {
-    next();
-  }
-});
+import router from '../../router';
 
 const state = {
   token: null,
@@ -41,9 +29,7 @@ const actions = {
   login({ commit }) {
     const { username, password } = state;
     const basicAuthBase64 = window.btoa(`${username}:${password}`);
-    console.log(basicAuthBase64);
-    authGateway.fetchAuthToken(basicAuthBase64)
-    .then(token => {
+    authGateway.fetchAuthToken(basicAuthBase64).then(token => {
       console.log(token);
       commit('setToken', token);
       commit('setUsername', null);

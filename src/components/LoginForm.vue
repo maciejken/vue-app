@@ -15,7 +15,7 @@
               <input :value="password" type="password" @input="updatePassword" placeholder="Hasło">
             </div>
           </div>
-          <button class="ui fluid large teal submit button" @click="login">Zaloguj się</button>          
+          <button type="button" class="ui fluid large teal submit button" @click="login">Zaloguj</button>          
         </div>
       </form>      
     </div>

@@ -6,7 +6,7 @@
     <a href="#" class="item">Dodaj obraz</a>
     <div v-if="isLoggedIn" class="right menu">
       <a href="#" class="item" @click="logout">
-        <i class="sign-out icon"></i>Wyloguj się
+        <i class="sign-out icon"></i>Wyjdź
       </a>
     </div>
  </div>
