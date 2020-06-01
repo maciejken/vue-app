@@ -1,6 +1,7 @@
 <template>
+
   <div class="ui middle aligned center aligned grid">
-    <div class="column">
+    <div class="column">      
       <form class="ui large form">
         <div class="ui segment">
           <div class="field">
@@ -12,12 +13,17 @@
           <div class="field">
             <div class="ui left icon input">
               <i class="lock icon"></i>
-              <input :value="password" type="password" @input="updatePassword" placeholder="Hasło">
+              <input :value="password" type="password" @input="updatePassword" placeholder="Hasło  ( 8 - 24 znaków )">
             </div>
           </div>
-          <button type="button" class="ui fluid large teal submit button" @click="login">Zaloguj</button>          
+          <button type="button" class="ui fluid large teal submit button" @click="login" :disabled="!isEmailValid || !isPasswordValid">Zaloguj</button>
         </div>
-      </form>      
+      </form>
+      <transition name="fade">
+        <div v-if="isAccessDenied" class="ui negative message">
+          <i class="ban icon"></i>Brak dostępu!
+        </div>
+      </transition>
     </div>
     
   </div>
@@ -29,7 +35,7 @@ import { mapActions, mapGetters } from 'vuex';
 export default {
   name: "LoginForm",
   methods: mapActions(['login', 'updateEmail', 'updatePassword']),
-  computed: mapGetters(['email', 'password'])
+  computed: mapGetters(['email', 'password', 'isAccessDenied', 'isEmailValid', 'isPasswordValid']),
 };
 </script>
 
@@ -39,5 +45,11 @@ export default {
   }
   .column {
     max-width: 450px;
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
   }
 </style>
