@@ -16,7 +16,7 @@
               <input :value="password" type="password" @input="updatePassword" placeholder="Hasło  ( 8 - 24 znaków )">
             </div>
           </div>
-          <button type="button" class="ui fluid large teal submit button" @click="login" :disabled="!isEmailValid || !isPasswordValid">Zaloguj</button>
+          <button type="button" class="ui fluid large teal submit button" @click="login" :disabled="!isEmailValid || !isPasswordValid || isAccessDenied">Zaloguj</button>
         </div>
       </form>
       <transition name="fade">
