@@ -6,7 +6,7 @@
           <div class="field">
             <div class="ui left icon input">
               <i class="user icon"></i>
-              <input :value="email" type="email" @input="updateEmail"
+              <input :value="username" type="email" @input="updateUsername"
                 placeholder="Adres e-mail">
             </div>
           </div>
@@ -19,8 +19,8 @@
           </div>
           <button type="button"
             class="ui fluid large teal submit button"
-            :disabled="!isEmailValid || !isPasswordValid || authError"
-            @click="login(`${email}:${password}`)">Zaloguj
+            :disabled="!isUsernameValid || !isPasswordValid || authError"
+            @click="login({ username, password })">Zaloguj
           </button>          
         </div>
       </form>
@@ -40,14 +40,14 @@ export default {
   name: "LoginForm",
   data() {
     return {
-      email: null,
+      username: null,
       password: null,
     };
   },
   methods: {
     ...mapActions(['login', 'clearAuthError']),
-    updateEmail(evt) {
-      this.email = evt.target.value;
+    updateUsername(evt) {
+      this.username = evt.target.value;
       this.clearAuthError();
     },
     updatePassword(evt) {
@@ -57,9 +57,9 @@ export default {
   },
   computed: {
     ...mapGetters(['authError']),
-    isEmailValid() {
+    isUsernameValid() {
       const EmailRegex = /^[a-zA-Z0-9_.+-]{3,20}@[a-zA-Z0-9-]{3,10}\.[a-zA-Z0-9-.]{2,10}$/;
-      return EmailRegex.test(this.email);
+      return EmailRegex.test(this.username);
     },
     isPasswordValid() {
       const PasswordRegex = /^[A-Za-z0-9]{8,24}$/;

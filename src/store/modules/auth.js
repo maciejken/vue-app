@@ -1,4 +1,4 @@
-import authGateway from '../../gateways/auth-gateway';
+import api from '../../api/auth';
 import router from '../../router';
 
 const state = {
@@ -10,15 +10,17 @@ const getters = {
   isLoggedIn({ token }) {
     return !!token;
   },
+  authToken({ token }) {
+    return token;
+  },
   authError({ error }) {
     return error;
   }
 };
 
 const actions = {
-  login({ commit }, basicCredentials) {
-    const basicCredentialsBase64 = window.btoa(basicCredentials);
-    authGateway.fetchAuthToken(basicCredentialsBase64).then(token => {
+  login({ commit }, basicAuth) {
+    api.fetchAuthToken(basicAuth).then(token => {
       commit('setToken', token);
       commit('setError', null);
       router.push('/');
