@@ -1,51 +1,62 @@
+import jwtDecode from 'jwt-decode';
 import api from '../../api/auth';
 import router from '../../router';
 
 const state = {
-  token: null,
-  error: null,
+  accessToken: null,
+  accessError: null,
 };
 
 const getters = {
-  isLoggedIn({ token }) {
-    return !!token;
+  isLoggedIn({ accessToken }) {
+    return !!accessToken;
   },
-  authToken({ token }) {
-    return token;
+  accessToken({ accessToken }) {
+    return accessToken;
   },
-  authError({ error }) {
-    return error;
+  accessError({ accessError }) {
+    return accessError;
   }
 };
 
 const actions = {
-  login({ commit }, basicAuth) {
-    api.fetchAuthToken(basicAuth).then(token => {
-      commit('setToken', token);
-      commit('setError', null);
+  async login({ commit }, basicAuth) {
+    try {
+      const res = await api.fetchAccessToken(basicAuth);
+      commit('setAccessToken', res.data);
+      localStorage.accessToken = res.data;
       router.push('/');
-    })
-    .catch(err => {
+    } catch (err) {
       if (err.message.endsWith('status code 403')) {
-        commit('setError', new Error('Brak dostępu (błąd 403)'));
+        commit('setAccessError', new Error('Odmowa dostępu'));
+      } else {
+        commit('setAccessError', new Error('Nieznany błąd'));
       }
-    });
+    }
+  },
+  updateAccessToken({ commit }, token) {
+    if (token) {
+      jwtDecode(token);
+      commit('setAccessToken', token);
+      router.push('/');
+    }
   },
   logout({ commit }) {
-    commit('setToken', null);
+    commit('setAccessToken', null);
+    delete localStorage.accessToken;
     router.push('/login');
   },
-  clearAuthError({ commit }) {
-    commit('setError', null);
+  clearAccessError({ commit }) {
+    commit('setAccessError', null);
   },
 };
 
 const mutations = {
-  setToken(state, token) {
-    state.token = token;
+  setAccessToken(state, token) {
+    state.accessToken = token;
   },
-  setError(state, error) {
-    state.error = error;
+  setAccessError(state, error) {
+    state.accessError = error;
   }
 };
 

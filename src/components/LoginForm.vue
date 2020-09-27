@@ -19,14 +19,14 @@
           </div>
           <button type="button"
             class="ui fluid large teal submit button"
-            :disabled="!isUsernameValid || !isPasswordValid || authError"
+            :disabled="!isUsernameValid || !isPasswordValid || accessError"
             @click="login({ username, password })">Zaloguj
           </button>          
         </div>
       </form>
       <transition name="fade">
-        <div v-if="authError" class="ui negative message">
-          <i class="ban icon"></i>{{authError.message}}
+        <div v-if="accessError" class="ui negative message">
+          <i class="ban icon"></i>{{accessError.message}}
         </div>
       </transition>
     </div>
@@ -38,25 +38,23 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: "LoginForm",
-  data() {
-    return {
-      username: null,
-      password: null,
-    };
-  },
+  data: () => ({
+    username: null,
+    password: null,
+  }),
   methods: {
-    ...mapActions(['login', 'clearAuthError']),
+    ...mapActions(['login', 'clearAccessError', 'updateAccessToken']),
     updateUsername(evt) {
       this.username = evt.target.value;
-      this.clearAuthError();
+      this.clearAccessError();
     },
     updatePassword(evt) {
       this.password = evt.target.value;
-      this.clearAuthError();
+      this.clearAccessError();
     },
   },
   computed: {
-    ...mapGetters(['authError']),
+    ...mapGetters(['accessError', 'accessToken']),
     isUsernameValid() {
       const EmailRegex = /^[a-zA-Z0-9_.+-]{3,20}@[a-zA-Z0-9-]{3,10}\.[a-zA-Z0-9-.]{2,10}$/;
       return EmailRegex.test(this.username);
@@ -65,6 +63,10 @@ export default {
       const PasswordRegex = /^[A-Za-z0-9]{8,24}$/;
       return PasswordRegex.test(this.password);
     },
+  },
+  beforeMount() {
+    const { accessToken } = localStorage;
+    this.updateAccessToken(accessToken);
   },
 };
 </script>

@@ -1,7 +1,14 @@
 <template>
-  <div>
+  <div class="Home">
     <AppHeader />
-    <img :src="image" alt="" width="500">
+    <div class="Home__images">
+      <img class="Home__thumbnail"
+        v-for="t of thumbnails"
+        :key="`thumbnail-${t.filename}`"
+        :src="`${pathToThumbnails}/${t.filename}`"
+        alt=""
+      />
+    </div>
   </div>
 </template>
 
@@ -15,19 +22,31 @@ export default {
   components: {
     AppHeader
   },
-  data: () => {
-    return {
-      image: null,
-    };
-  },
+  data: () => ({
+    thumbnails: [],
+  }),
   computed: {
-    ...mapGetters(['authToken']),
+    ...mapGetters(['accessToken']),
+    pathToThumbnails() {
+      return `${process.env.VUE_APP_API_URL}/uploads/thumbnails`;
+    },
   },
-  mounted() {
-    api.getImage('IMG_20191213_215802.jpg', { token: this.authToken })
-    .then(img => {
-      this.image = img.data;
-    });
+  async mounted() {
+    const images = await api.getImages({ accessToken: this.accessToken });
+    this.thumbnails = images.data;
   },
 };
 </script>
+
+<style scoped lang="scss">
+  .Home {
+    &__images {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    &__thumbnail {
+      width: 100px;
+    } 
+  }
+</style>

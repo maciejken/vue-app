@@ -1,12 +1,12 @@
 import http from './http';
 
 export default {
-  getImage(filename, { token }) {
+  getImages({ accessToken }) {
     const opts = {
-      url: `${process.env.VUE_APP_API_URL}/images/${filename}`,
+      url: `${process.env.VUE_APP_API_URL}/images`,
       headers: {
-        Authorization: `Bearer ${token}`,
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     };
     return http.get(opts);
   }
