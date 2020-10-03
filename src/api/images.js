@@ -1,7 +1,7 @@
 import http from './http';
 
 export default {
-  getImages({ accessToken }) {
+  fetchImages({ accessToken }) {
     const opts = {
       url: `${process.env.VUE_APP_API_URL}/images`,
       headers: {

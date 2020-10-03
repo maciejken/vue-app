@@ -3,9 +3,9 @@
     <AppHeader />
     <div class="Home__images">
       <img class="Home__thumbnail"
-        v-for="t of thumbnails"
-        :key="`thumbnail-${t.filename}`"
-        :src="`${pathToThumbnails}/${t.filename}`"
+        v-for="image of images"
+        :key="`image-${image.filename}`"
+        :src="`${pathToThumbnails}/${image.filename}`"
         alt=""
       />
     </div>
@@ -13,27 +13,25 @@
 </template>
 
 <script>
-import api from '../api/images';
 import AppHeader from './AppHeader';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: "Home",
   components: {
     AppHeader
   },
-  data: () => ({
-    thumbnails: [],
-  }),
   computed: {
-    ...mapGetters(['accessToken']),
+    ...mapGetters(['images', 'imagesError']),
     pathToThumbnails() {
       return `${process.env.VUE_APP_API_URL}/uploads/thumbnails`;
     },
   },
-  async mounted() {
-    const images = await api.getImages({ accessToken: this.accessToken });
-    this.thumbnails = images.data;
+  mounted() {
+    this.fetchImages();
+  },
+  methods: {
+    ...mapActions(['fetchImages']),
   },
 };
 </script>
