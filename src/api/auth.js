@@ -1,10 +1,12 @@
 import http from './http';
 
 export default {
-  fetchAccessToken(auth) {
+  fetchAccessToken({ username, password }) {
     const opts = {
       url: `${process.env.VUE_APP_API_URL}/auth`,
-      auth,
+      headers: {
+        Authorization: `Basic ${btoa(`${username}:${password}`)}`
+      },
     };
     return http.get(opts);
   },

@@ -14,10 +14,10 @@ const actions = {
   async fetchImages({ commit, getters }) {
     try {
       const images = await api.fetchImages({ accessToken: getters.accessToken });
-      commit('setImages', images.data)
-      commit('setImagesError', null)
+      commit('setImages', images);
+      commit('setImagesError', null);
     } catch (err) {
-      commit('setImagesError', err)
+      commit('setImagesError', err);
     }
   },
 };

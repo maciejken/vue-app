@@ -1,12 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import axios from 'axios';
 import App from './App';
 import store from './store';
 import router from './router';
 
 Vue.use(VueRouter);
-axios.defaults.withCredentials = true;
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(r => r.meta.requiresAuth)) {

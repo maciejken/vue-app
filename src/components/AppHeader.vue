@@ -9,7 +9,7 @@
       </router-link>      
     </div>
     <div class="right menu">
-      <a href="#" class="item" @click="logout">
+      <a class="item" @click="logout">
         <i class="sign-out icon"></i>Wyjdź
       </a>
     </div>

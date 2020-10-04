@@ -27,7 +27,7 @@ export default {
       return `${process.env.VUE_APP_API_URL}/uploads/thumbnails`;
     },
   },
-  mounted() {
+  created() {
     this.fetchImages();
   },
   methods: {

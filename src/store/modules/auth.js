@@ -20,11 +20,11 @@ const getters = {
 };
 
 const actions = {
-  async login({ commit }, basicAuth) {
+  async login({ commit }, { username, password }) {
     try {
-      const res = await api.fetchAccessToken(basicAuth);
-      commit('setAccessToken', res.data);
-      localStorage.accessToken = res.data;
+      const response = await api.fetchAccessToken({ username, password });
+      commit('setAccessToken', response);
+      localStorage.accessToken = response;
       router.push('/');
     } catch (err) {
       if (err.message.endsWith('status code 403')) {

@@ -6,20 +6,26 @@
           <div class="field">
             <div class="ui left icon input">
               <i class="user icon"></i>
-              <input :value="username" type="email" @input="updateUsername"
-                placeholder="Adres e-mail">
+              <input :value="username" type="email"
+                @input="updateUsername"
+                @keydown="loginOnEnter"
+                placeholder="Adres e-mail"
+              />
             </div>
           </div>
           <div class="field">
             <div class="ui left icon input">
               <i class="lock icon"></i>
-              <input :value="password" type="password" @input="updatePassword"
-                placeholder="Hasło  ( 8 - 24 znaków )">
+              <input :value="password" type="password"
+                @input="updatePassword"
+                @keydown="loginOnEnter"
+                placeholder="Hasło  ( 8 - 24 znaków )"
+              >
             </div>
           </div>
           <button type="button"
             class="ui fluid large teal submit button"
-            :disabled="!isUsernameValid || !isPasswordValid || accessError"
+            :disabled="!isFormValid || accessError"
             @click="login({ username, password })">Zaloguj
           </button>          
         </div>
@@ -52,6 +58,11 @@ export default {
       this.password = evt.target.value;
       this.clearAccessError();
     },
+    loginOnEnter(evt) {
+      if (this.isFormValid && evt.keyCode === 13) {
+        this.login({ username: this.username, password: this.password });
+      }
+    },
   },
   computed: {
     ...mapGetters(['accessError', 'accessToken']),
@@ -62,6 +73,9 @@ export default {
     isPasswordValid() {
       const PasswordRegex = /^[A-Za-z0-9]{8,24}$/;
       return PasswordRegex.test(this.password);
+    },
+    isFormValid() {
+      return this.isUsernameValid && this.isPasswordValid;
     },
   },
   beforeMount() {
