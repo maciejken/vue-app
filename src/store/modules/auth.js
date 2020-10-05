@@ -1,18 +1,14 @@
-import jwtDecode from 'jwt-decode';
 import api from '../../api/auth';
 import router from '../../router';
 
 const state = {
-  accessToken: null,
+  authorized: false,
   accessError: null,
 };
 
 const getters = {
-  isLoggedIn({ accessToken }) {
-    return !!accessToken;
-  },
-  accessToken({ accessToken }) {
-    return accessToken;
+  isAuthorized({ authorized }) {
+    return authorized;
   },
   accessError({ accessError }) {
     return accessError;
@@ -22,28 +18,20 @@ const getters = {
 const actions = {
   async login({ commit }, { username, password }) {
     try {
-      const response = await api.fetchAccessToken({ username, password });
-      commit('setAccessToken', response);
-      localStorage.accessToken = response;
+      await api.authenticate({ username, password });
+      commit('setAuthorized', true);
       router.push('/');
     } catch (err) {
-      if (err.message.endsWith('status code 403')) {
+      if (err.message) {
         commit('setAccessError', new Error('Odmowa dostępu'));
       } else {
         commit('setAccessError', new Error('Nieznany błąd'));
       }
     }
   },
-  updateAccessToken({ commit }, token) {
-    if (token) {
-      jwtDecode(token);
-      commit('setAccessToken', token);
-      router.push('/');
-    }
-  },
   logout({ commit }) {
-    commit('setAccessToken', null);
-    delete localStorage.accessToken;
+    commit('setAuthorized', false);
+    document.cookie = '';
     router.push('/login');
   },
   clearAccessError({ commit }) {
@@ -52,8 +40,8 @@ const actions = {
 };
 
 const mutations = {
-  setAccessToken(state, token) {
-    state.accessToken = token;
+  setAuthorized(state, isAuthorized) {
+    state.authorized = isAuthorized;
   },
   setAccessError(state, error) {
     state.accessError = error;

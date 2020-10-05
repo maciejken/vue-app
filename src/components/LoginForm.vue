@@ -49,7 +49,7 @@ export default {
     password: null,
   }),
   methods: {
-    ...mapActions(['login', 'clearAccessError', 'updateAccessToken']),
+    ...mapActions(['login', 'clearAccessError']),
     updateUsername(evt) {
       this.username = evt.target.value;
       this.clearAccessError();
@@ -65,7 +65,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['accessError', 'accessToken']),
+    ...mapGetters(['accessError', 'isAuthenticated']),
     isUsernameValid() {
       const EmailRegex = /^[a-zA-Z0-9_.+-]{3,20}@[a-zA-Z0-9-]{3,10}\.[a-zA-Z0-9-.]{2,10}$/;
       return EmailRegex.test(this.username);
@@ -77,10 +77,6 @@ export default {
     isFormValid() {
       return this.isUsernameValid && this.isPasswordValid;
     },
-  },
-  beforeMount() {
-    const { accessToken } = localStorage;
-    this.updateAccessToken(accessToken);
   },
 };
 </script>

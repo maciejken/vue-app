@@ -1,12 +1,17 @@
 export default {
-  async get(opts) {
-    const { url, headers } = opts;
+  async get(url, opts = {}) {
+    const { headers } = opts;
     const response = await fetch(url, {
       method: 'GET',
       headers,
       credentials: 'include'
     });
     const contentType = response.headers.get('Content-Type');
-    return contentType.startsWith('text/html') ? response.text() : response.json();
+    const data = contentType.startsWith('text/html') ? response.text() : response.json();      
+    if (response.ok) {
+      return data;
+    } else {
+      throw new Error(data.message);
+    }
   }
 };

@@ -22,16 +22,21 @@ export default {
     AppHeader
   },
   computed: {
-    ...mapGetters(['images', 'imagesError']),
+    ...mapGetters(['images', 'imagesError', 'isAuthorized']),
     pathToThumbnails() {
       return `${process.env.VUE_APP_API_URL}/uploads/thumbnails`;
     },
   },
   created() {
-    this.fetchImages();
+    const cookie = this.$cookies.get('authorized');
+    if (cookie) {
+      this.fetchImages();
+    } else {
+      this.logout();
+    }
   },
   methods: {
-    ...mapActions(['fetchImages']),
+    ...mapActions(['fetchImages', 'logout']),
   },
 };
 </script>

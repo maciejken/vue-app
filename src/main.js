@@ -1,14 +1,16 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import VueCookies from 'vue-cookies';
 import App from './App';
 import store from './store';
 import router from './router';
 
 Vue.use(VueRouter);
+Vue.use(VueCookies);
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(r => r.meta.requiresAuth)) {
-    if (!store.getters.isLoggedIn) {
+    if (!store.getters.isAuthorized) {
       next({ path: '/login' });
     } else {
       next();

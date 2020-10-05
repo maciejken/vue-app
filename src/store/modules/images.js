@@ -11,9 +11,9 @@ const getters = {
 };
 
 const actions = {
-  async fetchImages({ commit, getters }) {
+  async fetchImages({ commit }) {
     try {
-      const images = await api.fetchImages({ accessToken: getters.accessToken });
+      const images = await api.fetchImages();
       commit('setImages', images);
       commit('setImagesError', null);
     } catch (err) {
