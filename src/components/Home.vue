@@ -45,11 +45,13 @@ export default {
   .Home {
     &__images {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
+      flex-wrap: wrap;
     }
     &__thumbnail {
-      width: 100px;
+      width: 200px;
+      cursor: pointer;
     } 
   }
 </style>
