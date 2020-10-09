@@ -1,42 +1,52 @@
 <template>
   <div class="Home">
-    <AppHeader />
     <div class="Home__images">
-      <img class="Home__thumbnail"
-        v-for="image of images"
-        :key="`image-${image.filename}`"
-        :src="`${pathToThumbnails}/${image.filename}`"
-        alt=""
-      />
+      <router-link
+        v-for="img of images"
+        :key="`thumbnail-${img.filename}`"
+        :to="`/images/${img.filename}`"
+      >
+        <Thumbnail
+          :data="img"
+          @click="selectImage(img)"
+        />        
+      </router-link>
+
     </div>
   </div>
 </template>
 
 <script>
-import AppHeader from './AppHeader';
 import { mapActions, mapGetters } from 'vuex';
+import Thumbnail from './Thumbnail.vue';
 
 export default {
   name: "Home",
   components: {
-    AppHeader
+    Thumbnail,
   },
   computed: {
     ...mapGetters(['images', 'imagesError', 'isAuthorized']),
-    pathToThumbnails() {
-      return `${process.env.VUE_APP_API_URL}/uploads/thumbnails`;
+  },
+  methods: {
+    ...mapActions([
+      'fetchImages',
+      'authorize',
+      'logout',
+      'selectImage'
+    ]),
+    checkAccess() {
+      const cookie = this.$cookies.get('authorized');
+      if (cookie) {
+        this.authorize();
+      } else {
+        this.logout();
+      }
     },
   },
   created() {
-    const cookie = this.$cookies.get('authorized');
-    if (cookie) {
-      this.fetchImages();
-    } else {
-      this.logout();
-    }
-  },
-  methods: {
-    ...mapActions(['fetchImages', 'logout']),
+    this.checkAccess();
+    this.fetchImages();
   },
 };
 </script>
@@ -49,9 +59,5 @@ export default {
       align-items: center;
       flex-wrap: wrap;
     }
-    &__thumbnail {
-      width: 200px;
-      cursor: pointer;
-    } 
   }
 </style>

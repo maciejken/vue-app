@@ -1,19 +1,22 @@
 <template>
-  <div class="ui secondary pointing menu">
-    <div class="left menu">
-      <router-link to="/" class="item" :class="{ active: path === '/' }">
-        Galeria
-      </router-link>
-      <router-link to="/upload" class="item" :class="{ active: path === '/upload' }">
-        Dodaj obraz
-      </router-link>      
-    </div>
-    <div class="right menu">
-      <a class="item" @click="logout">
-        <i class="sign-out icon"></i>Wyjdź
-      </a>
-    </div>
- </div>
+  <div class="AppHeader">
+    <div class="ui secondary pointing menu">
+      <div class="AppHeader__right left menu">
+        <router-link to="/images" class="item" active-class="active">
+          Galeria
+        </router-link>
+        <router-link v-if="isAuthorized" to="/upload" class="item" active-class="active">
+          Dodaj obrazy
+        </router-link>
+      </div>
+      <div v-if="isAuthorized" class="AppHeader__left right menu">
+        <div class="AppHeader__timer">{{timeLeft}}</div>
+        <a class="item" @click="logout">
+          <i class="sign-out icon"></i>Wyjdź
+        </a>
+      </div>
+    </div>    
+  </div>
 </template>
 
 <script>
@@ -23,10 +26,20 @@ export default {
   name: 'AppHeader',
   methods: mapActions(['logout']),
   computed: {
-    ...mapGetters(['isLoggedIn']),
+    ...mapGetters(['isAuthorized', 'timeLeft']),
     path() {
       return this.$route.path;
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .AppHeader {
+    margin-bottom: 10px;
+    &__timer {
+      display: flex;
+      align-items: center;
+    }
+  }
+</style>

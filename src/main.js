@@ -9,7 +9,7 @@ Vue.use(VueRouter);
 Vue.use(VueCookies);
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(r => r.meta.requiresAuth)) {
+  if (to.matched.some(r => r.name !== 'Login')) {
     if (!store.getters.isAuthorized) {
       next({ path: '/login' });
     } else {

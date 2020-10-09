@@ -2,24 +2,38 @@ import api from '../../api/auth';
 import router from '../../router';
 
 const state = {
-  authorized: false,
+  secondsLeft: null,
+  authTimer: null,
+  authTimeout: null,
   accessError: null,
 };
 
 const getters = {
-  isAuthorized({ authorized }) {
-    return authorized;
+  isAuthorized({ secondsLeft }) {
+    return secondsLeft > 0;
   },
   accessError({ accessError }) {
     return accessError;
-  }
+  },
+  timeLeft({ secondsLeft }) {
+    let time;
+    if (secondsLeft) {
+      const seconds = String(secondsLeft % 60);
+      const minutes = (secondsLeft - seconds)/60;
+      const zeroPaddedSeconds = seconds.padStart(2, '0');
+      time = `${minutes}:${zeroPaddedSeconds}`;
+    } else {
+      time = '0:00';
+    }
+    return time;
+  },
 };
 
 const actions = {
-  async login({ commit }, { username, password }) {
+  async login({ commit, dispatch }, { username, password }) {
     try {
       await api.authenticate({ username, password });
-      commit('setAuthorized', true);
+      dispatch('authorize');
       router.push('/');
     } catch (err) {
       if (err.message) {
@@ -30,22 +44,39 @@ const actions = {
     }
   },
   logout({ commit }) {
-    commit('setAuthorized', false);
     document.cookie = '';
+    clearInterval(state.authTimer);
+    commit('setAuthTimer', null);
     router.push('/login');
   },
   clearAccessError({ commit }) {
     commit('setAccessError', null);
   },
+  authorize({ commit, dispatch, getters }) {
+    if (!getters.isAuthorized) {
+      const authSeconds = parseInt(process.env.VUE_APP_AUTH_VALIDITY_IN_SECONDS);
+      commit('setSecondsLeft', authSeconds);
+      const timer = setInterval(() => commit('setSecondsLeft', state.secondsLeft - 1), 1000);
+      commit('setAuthTimer', timer);
+      const timeout = setTimeout(() => dispatch('logout'), authSeconds * 1000);
+      commit('setAuthTimeout', timeout);
+    }
+  },
 };
 
 const mutations = {
-  setAuthorized(state, isAuthorized) {
-    state.authorized = isAuthorized;
-  },
   setAccessError(state, error) {
     state.accessError = error;
-  }
+  },
+  setSecondsLeft(state, secondsLeft) {
+    state.secondsLeft = secondsLeft;
+  },
+  setAuthTimer(state, timer) {
+    state.authTimer = timer;
+  },
+  setAuthTimeout(state, timeout) {
+    state.authTimeout = timeout;
+  },
 };
 
 export default {
