@@ -65,7 +65,7 @@ const actions = {
   },
   authorize({ commit, dispatch, getters }, seconds) {
     if (!getters.isAuthorized) {
-      const authSeconds = seconds || parseInt(process.env.VUE_APP_AUTH_VALIDITY_IN_SECONDS);
+      const authSeconds = seconds || parseInt(process.env.VUE_APP_AUTH_VALIDITY_SECONDS);
       commit('setSecondsLeft', authSeconds);
       const timer = setInterval(() => commit('setSecondsLeft', state.secondsLeft - 1), 1000);
       commit('setAuthTimer', timer);
