@@ -40,7 +40,7 @@ const actions = {
     try {
       await api.uploadImages(formData);
       commit('setError', null);
-      router.push('/images');
+      router.push('/uploads');
     } catch (err) {
       commit('setError', err);
     }

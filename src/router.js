@@ -16,20 +16,20 @@ const router = new VueRouter({
     },
     {
       path: '/',
-      redirect: '/images',
+      redirect: '/uploads',
     },
     {
-      path: '/images',
+      path: '/uploads',
       name: 'Home',
       component: Home,
     },
     {
-      path: '/images/:filename',
+      path: '/uploads/:filename',
       name: 'ImageDetails',
       component: ImageDetails,
     },
     {
-      path: '/upload',
+      path: '/upload-files',
       name: 'Upload',
       component: UploadForm,
     },

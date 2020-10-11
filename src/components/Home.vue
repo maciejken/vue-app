@@ -4,11 +4,11 @@
       <router-link
         v-for="img of uploadedImages"
         :key="`thumbnail-${img.filename}`"
-        :to="`/images/${img.filename}`"
+        :to="`/uploads/${img.filename}`"
       >
         <Thumbnail
           :data="img"
-          @click="selectImage(img)"
+          @click.native="selectImage(img)"
           @editImage="handleEditImage"
         />        
       </router-link>

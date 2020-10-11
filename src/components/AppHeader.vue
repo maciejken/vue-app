@@ -2,10 +2,10 @@
   <div class="AppHeader">
     <div class="ui secondary pointing menu">
       <div class="AppHeader__right left menu">
-        <router-link to="/images" class="item" active-class="active">
+        <router-link to="/uploads" class="item" active-class="active">
           Galeria
         </router-link>
-        <router-link v-if="isAuthorized" to="/upload" class="item" active-class="active">
+        <router-link v-if="isAuthorized" to="/upload-files" class="item" active-class="active">
           Dodaj obrazy
         </router-link>
       </div>
