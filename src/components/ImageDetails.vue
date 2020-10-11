@@ -18,13 +18,10 @@ export default {
     data: Object,
   },
   computed: {
-    ...mapGetters(['selectedImage']),
+    ...mapGetters(['pathToUploads','selectedImage']),
     filename() {
       return this.$route.params.filename;
     },
-    pathToUploads() {
-      return process.env.VUE_APP_PATH_TO_UPLOADS;
-    }
   },
   methods: {
     ...mapActions(['fetchImage']),

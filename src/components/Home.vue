@@ -2,50 +2,54 @@
   <div class="Home">
     <div class="Home__images">
       <router-link
-        v-for="img of images"
+        v-for="img of uploadedImages"
         :key="`thumbnail-${img.filename}`"
         :to="`/images/${img.filename}`"
       >
         <Thumbnail
           :data="img"
           @click="selectImage(img)"
+          @editImage="handleEditImage"
         />        
       </router-link>
-
     </div>
+    <ImageDetailsEditor v-if="imageEditModeEnabled" />
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import Thumbnail from './Thumbnail.vue';
+import ImageDetailsEditor from './ImageDetailsEditor.vue';
 
 export default {
   name: "Home",
   components: {
     Thumbnail,
+    ImageDetailsEditor,
   },
   computed: {
-    ...mapGetters(['images', 'imagesError', 'isAuthorized']),
+    ...mapGetters([
+      'uploadedImages',
+      'imagesError',
+      'isAuthorized',
+      'imageEditModeEnabled',
+    ]),
   },
   methods: {
     ...mapActions([
       'fetchImages',
       'authorize',
       'logout',
-      'selectImage'
+      'selectImage',
+      'enableImageEditMode',
     ]),
-    checkAccess() {
-      const cookie = this.$cookies.get('authorized');
-      if (cookie) {
-        this.authorize();
-      } else {
-        this.logout();
-      }
+    handleEditImage(image) {
+      this.selectImage(image);
+      this.enableImageEditMode();
     },
   },
   created() {
-    this.checkAccess();
     this.fetchImages();
   },
 };

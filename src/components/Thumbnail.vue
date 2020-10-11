@@ -1,20 +1,22 @@
 <template>
   <div class="Thumbnail" @mouseenter="active = true" @mouseleave="active = false">
     <img class="Thumbnail__img"
-      :src="`${pathToThumbnails}/${data.filename}`"
+      :src="`${pathToUploads}/${data.filename}/thumbnail`"
       alt=""
     />
     <div v-if="active || check" class="Thumbnail__checkbox">
       <i class="Thumbnail__check-icon square outline icon" :class="{ check }"
-        @click="check = !check"
+        @click.prevent="check = !check"
       ></i>
     </div>
     <div v-if="active" class="Thumbnail__toolbar">
       <span class="Thumbnail__filename">{{data.filename | truncate}}</span>
       <div class="Thumbnail__actions">
-        <i class="Thumbnail__action edit icon"></i>
+        <i class="Thumbnail__action edit icon"
+          @click.prevent="editData"
+        ></i>
         <i class="Thumbnail__action trash alternate icon"
-          @click="deleteAndRefresh"
+          @click.prevent="deleteAndRefresh"
         ></i>        
       </div>
     </div>
@@ -22,7 +24,8 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
   name: "Thumbnail",
   data: () => ({
@@ -33,15 +36,16 @@ export default {
     data: Object,
   },
   computed: {
-    pathToThumbnails() {
-      return process.env.VUE_APP_PATH_TO_THUMBNAILS;
-    },
+    ...mapGetters(['pathToUploads']),
   },
   methods: {
     ...mapActions(['deleteImage', 'fetchImages']),
     async deleteAndRefresh() {
       await this.deleteImage(this.data.filename);
       this.fetchImages();
+    },
+    editData() {
+      this.$emit('editImage', this.data);
     },
   },
   filters: {

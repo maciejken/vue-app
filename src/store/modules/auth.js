@@ -1,5 +1,6 @@
 import api from '../../api/auth';
 import router from '../../router';
+import { getAuthExpired } from '../../cookie';
 
 const state = {
   secondsLeft: null,
@@ -11,6 +12,15 @@ const state = {
 const getters = {
   isAuthorized({ secondsLeft }) {
     return secondsLeft > 0;
+  },
+  hourglass({ secondsLeft }) {
+    let phase;
+    if (secondsLeft > 720) {
+      phase = 'start';
+    } else {
+      phase = secondsLeft > 180 ? 'half' : 'end';
+    }
+    return phase;
   },
   accessError({ accessError }) {
     return accessError;
@@ -44,7 +54,8 @@ const actions = {
     }
   },
   logout({ commit }) {
-    document.cookie = '';
+    document.cookie = getAuthExpired();
+    commit('setSecondsLeft', null);
     clearInterval(state.authTimer);
     commit('setAuthTimer', null);
     router.push('/login');
@@ -52,9 +63,9 @@ const actions = {
   clearAccessError({ commit }) {
     commit('setAccessError', null);
   },
-  authorize({ commit, dispatch, getters }) {
+  authorize({ commit, dispatch, getters }, seconds) {
     if (!getters.isAuthorized) {
-      const authSeconds = parseInt(process.env.VUE_APP_AUTH_VALIDITY_IN_SECONDS);
+      const authSeconds = seconds || parseInt(process.env.VUE_APP_AUTH_VALIDITY_IN_SECONDS);
       commit('setSecondsLeft', authSeconds);
       const timer = setInterval(() => commit('setSecondsLeft', state.secondsLeft - 1), 1000);
       commit('setAuthTimer', timer);

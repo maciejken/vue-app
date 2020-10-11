@@ -50,7 +50,11 @@ export default {
     password: null,
   }),
   methods: {
-    ...mapActions(['login', 'clearAccessError']),
+    ...mapActions([
+      'login',
+      'clearAccessError',
+      'readAuthCookie',  
+    ]),
     handleKeyDown(evt) {
       if (this.isFormValid && evt.keyCode === 13) {
         this.login({ username: this.username, password: this.password });

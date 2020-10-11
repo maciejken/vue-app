@@ -1,10 +1,4 @@
-function getRequestOptions(opts) {
-  let headers;
-  let body;
-  if (opts) {
-    headers = opts.headers;
-    body = opts.body;
-  }
+function getRequestOptions({ headers, body }) {
   return {
     headers,
     body,
@@ -23,23 +17,30 @@ function getResponseData(response) {
 }
 
 export default {
-  async get(url, opts) {
+  async get(url, opts = {}) {
     const response = await fetch(url, {
       method: 'GET',
       ...getRequestOptions(opts)
     });
     return getResponseData(response);
   },
-  async post(url, opts) {
+  async post(url, opts = {}) {
     const response = await fetch(url, {
       method: 'POST',
       ...getRequestOptions(opts)
     });
     return getResponseData(response);
   },
-  async delete(url, opts) {
+  async delete(url, opts = {}) {
     const response = await fetch(url, {
       method: 'DELETE',
+      ...getRequestOptions(opts)
+    });
+    return getResponseData(response);
+  },
+  async patch(url, opts = {}) {
+    const response = await fetch(url, {
+      method: 'PATCH',
       ...getRequestOptions(opts)
     });
     return getResponseData(response);
