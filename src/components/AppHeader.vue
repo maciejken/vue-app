@@ -10,8 +10,10 @@
         </router-link>
       </div>
       <div v-if="isAuthorized" class="AppHeader__left right menu">
-        <div class="AppHeader__timer">
-          <i class="AppHeader__hourglass hourglass icon" :class="hourglassClass"></i>
+        <div class="AppHeader__timer" @click="reauth()">
+          <i class="AppHeader__hourglass hourglass icon"
+            :class="hourglassClass"
+          ></i>
           {{timeLeft}}
         </div>
         <a class="item" @click="logout">
@@ -27,7 +29,9 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'AppHeader',
-  methods: mapActions(['logout']),
+  methods: { 
+    ...mapActions(['authorize', 'reauth', 'logout']),
+  },
   computed: {
     ...mapGetters(['hourglass', 'isAuthorized', 'timeLeft']),
     path() {
@@ -53,6 +57,7 @@ export default {
     &__timer {
       display: flex;
       align-items: center;
+      cursor: pointer;
     }
   }
 </style>

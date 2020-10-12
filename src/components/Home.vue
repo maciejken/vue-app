@@ -39,6 +39,8 @@ export default {
   methods: {
     ...mapActions([
       'fetchImages',
+      'nextPage',
+      'previousPage',
       'authorize',
       'logout',
       'selectImage',

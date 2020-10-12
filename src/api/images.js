@@ -1,10 +1,11 @@
+import qs from 'qs';
 import http from './http';
 
 const apiUrl = process.env.VUE_APP_API_URL;
 
 export default {
-  async fetchImages() {
-    return http.get(`${apiUrl}/images`);
+  async fetchImages(query) {
+    return http.get(`${apiUrl}/images?${qs.stringify(query)}`);
   },
   async uploadImages(formData) {
     return http.post(`${apiUrl}/uploads`, {

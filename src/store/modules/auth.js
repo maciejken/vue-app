@@ -63,14 +63,28 @@ const actions = {
   clearAccessError({ commit }) {
     commit('setAccessError', null);
   },
-  authorize({ commit, dispatch, getters }, seconds) {
-    if (!getters.isAuthorized) {
-      const authSeconds = seconds || parseInt(process.env.VUE_APP_AUTH_VALIDITY_SECONDS);
-      commit('setSecondsLeft', authSeconds);
-      const timer = setInterval(() => commit('setSecondsLeft', state.secondsLeft - 1), 1000);
-      commit('setAuthTimer', timer);
-      const timeout = setTimeout(() => dispatch('logout'), authSeconds * 1000);
-      commit('setAuthTimeout', timeout);
+  authorize({ commit, dispatch, state }, seconds) {
+    if (state.authTimer) {
+      clearInterval(state.authTimer);
+      clearTimeout(state.authTimeout);
+    }
+    const authSeconds = seconds || parseInt(process.env.VUE_APP_AUTH_VALIDITY_SECONDS);
+    commit('setSecondsLeft', authSeconds);
+    const timer = setInterval(() => commit('setSecondsLeft', state.secondsLeft - 1), 1000);
+    commit('setAuthTimer', timer);
+    const timeout = setTimeout(() => dispatch('logout'), authSeconds * 1000);
+    commit('setAuthTimeout', timeout);
+  },
+  async reauth({ commit, dispatch }) {
+    try {
+      await api.authenticate();
+      dispatch('authorize'); 
+    } catch (err) {
+      if (err.message) {
+        commit('setAccessError', new Error('Odmowa dostępu'));
+      } else {
+        commit('setAccessError', new Error('Nieznany błąd'));
+      }
     }
   },
 };

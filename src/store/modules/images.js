@@ -3,6 +3,7 @@ import router from '../../router';
 
 const state = {
   images: [],
+  page: 1,
   pathToUploads: process.env.VUE_APP_PATH_TO_UPLOADS,
   selectedImage: {
     filename: null,
@@ -20,6 +21,7 @@ const state = {
 
 const getters = {
   uploadedImages: ({ images }) => images,
+  currentPage: ({ page }) => page,
   pathToUploads: ({ pathToUploads }) => pathToUploads,
   selectedImage: ({ selectedImage }) => selectedImage,
   imagesError: ({ error }) => error,
@@ -27,13 +29,25 @@ const getters = {
 };
 
 const actions = {
-  async fetchImages({ commit }) {
+  async fetchImages({ commit, state }) {
     try {
-      const images = await api.fetchImages();
+      const images = await api.fetchImages({ page: state.page });
       commit('setImages', images);
       commit('setError', null);
     } catch (err) {
       commit('setError', err);
+    }
+  },
+  nextPage({ commit, dispatch, state }) {
+    if (state.images.length < 10) {
+      commit('setPage', state.page + 1);
+      dispatch('fetchImages');      
+    }
+  },
+  previousPage({ commit, dispatch, state }) {
+    if (state.page > 1) {
+      commit('setPage', state.page - 1);
+      dispatch('fetchImages');      
     }
   },
   async uploadImages({ commit }, formData) {
@@ -106,6 +120,9 @@ const mutations = {
   },
   setError(state, error) {
     state.imagesError = error
+  },
+  setPage(state, page) {
+    state.page = page;
   },
   setSelectedImage(state, image) {
     state.selectedImage = image;
