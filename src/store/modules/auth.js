@@ -1,6 +1,6 @@
 import api from '../../api/auth';
 import router from '../../router';
-import { getAuthExpired } from '../../cookie';
+import { getAuthExpired } from '../../utils/cookie';
 
 const state = {
   secondsLeft: null,

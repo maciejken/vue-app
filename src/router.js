@@ -1,6 +1,6 @@
 import VueRouter from 'vue-router';
 import store from './store';
-import { getAuthSeconds } from './cookie';
+import { getAuthSeconds } from './utils/cookie';
 import LoginForm from './components/LoginForm.vue';
 import Home from './components/Home.vue';
 import UploadForm from './components/UploadForm.vue';

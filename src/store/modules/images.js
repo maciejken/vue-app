@@ -1,5 +1,6 @@
 import api from '../../api/images';
 import router from '../../router';
+import mapInput from '../../utils/map-input';
 
 const state = {
   images: [],
@@ -100,17 +101,23 @@ const actions = {
   disableImageEditMode({ commit }) {
     commit('setEditModeEnabled', false);
   },
-  updateImageCaption({ commit }, evt) {
-    commit('setSelectedImageCaption', evt.target.value);
+  updateImageCaption({ commit, getters }, evt) {
+    evt.currentValue = getters.selectedImage.caption || '';
+    evt.keyMap = getters.selectedKeyMap;
+    commit('setSelectedImageCaption', mapInput(evt));
   },
-  updateImageLocation({ commit }, evt) {
-    commit('setSelectedImageLocation', evt.target.value);
+  updateImageLocation({ commit, getters }, evt) {
+    evt.currentValue = getters.selectedImage.location || '';
+    evt.keyMap = getters.selectedKeyMap;
+    commit('setSelectedImageLocation', mapInput(evt));
   },
   updateImageLocationDateTime({ commit }, evt) {
     commit('setSelectedImageLocationDateTime', evt.target.value);
   },
-  updateImageDescription({ commit }, evt) {
-    commit('setSelectedImageDescription', evt.target.value);
+  updateImageDescription({ commit, getters }, evt) {
+    evt.currentValue = getters.selectedImage.description || '';
+    evt.keyMap = getters.selectedKeyMap;
+    commit('setSelectedImageDescription', mapInput(evt));
   },
 };
 
