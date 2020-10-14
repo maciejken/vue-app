@@ -3,35 +3,23 @@ import router from '../../router';
 import { getAuthExpired } from '../../utils/cookie';
 
 const state = {
-  secondsLeft: null,
-  authTimer: null,
-  authTimeout: null,
-  accessError: null,
+  seconds: null,
+  timer: null,
+  timeout: null,
+  error: null,
 };
 
 const getters = {
-  isAuthorized({ secondsLeft }) {
-    return secondsLeft > 0;
-  },
-  hourglass({ secondsLeft }) {
-    let phase;
-    if (secondsLeft > 720) {
-      phase = 'start';
-    } else {
-      phase = secondsLeft > 180 ? 'half' : 'end';
-    }
-    return phase;
-  },
-  accessError({ accessError }) {
-    return accessError;
-  },
-  timeLeft({ secondsLeft }) {
+  isAuthorized: ({ seconds }) => seconds > 0,
+  secondsLeft: ({ seconds }) => seconds,
+  accessError: ({ error }) => error,
+  timeLeft({ seconds }) {
     let time;
-    if (secondsLeft) {
-      const seconds = String(secondsLeft % 60);
-      const minutes = (secondsLeft - seconds)/60;
-      const zeroPaddedSeconds = seconds.padStart(2, '0');
-      time = `${minutes}:${zeroPaddedSeconds}`;
+    if (seconds) {
+      const secs = String(seconds % 60);
+      const mins = (seconds - secs)/60;
+      const zeroPaddedSecs = secs.padStart(2, '0');
+      time = `${mins}:${zeroPaddedSecs}`;
     } else {
       time = '0:00';
     }
@@ -47,33 +35,35 @@ const actions = {
       router.push('/');
     } catch (err) {
       if (err.message) {
-        commit('setAccessError', new Error('Odmowa dostępu'));
+        commit('SET_AUTH_ERROR', new Error('Odmowa dostępu'));
       } else {
-        commit('setAccessError', new Error('Nieznany błąd'));
+        commit('SET_AUTH_ERROR', new Error('Nieznany błąd'));
       }
     }
   },
-  logout({ commit }) {
+  logout({ commit, state }) {
     document.cookie = getAuthExpired();
-    commit('setSecondsLeft', null);
+    commit('SET_AUTH_SECONDS', null);
     clearInterval(state.authTimer);
-    commit('setAuthTimer', null);
+    commit('SET_AUTH_TIMER', null);
     router.push('/login');
   },
   clearAccessError({ commit }) {
-    commit('setAccessError', null);
+    commit('SET_AUTH_ERROR', null);
   },
-  authorize({ commit, dispatch, state }, seconds) {
-    if (state.authTimer) {
-      clearInterval(state.authTimer);
-      clearTimeout(state.authTimeout);
+  authorize(
+      { commit, dispatch, state },
+      seconds = parseInt(process.env.VUE_APP_AUTH_VALIDITY_SECONDS)
+    ) {
+    if (state.timer) {
+      clearInterval(state.timer);
+      clearTimeout(state.timeout);
     }
-    const authSeconds = seconds || parseInt(process.env.VUE_APP_AUTH_VALIDITY_SECONDS);
-    commit('setSecondsLeft', authSeconds);
-    const timer = setInterval(() => commit('setSecondsLeft', state.secondsLeft - 1), 1000);
-    commit('setAuthTimer', timer);
-    const timeout = setTimeout(() => dispatch('logout'), authSeconds * 1000);
-    commit('setAuthTimeout', timeout);
+    commit('SET_AUTH_SECONDS', seconds);
+    const timer = setInterval(() => commit('SET_AUTH_SECONDS', state.seconds - 1), 1000);
+    commit('SET_AUTH_TIMER', timer);
+    const timeout = setTimeout(() => dispatch('logout'), seconds * 1000);
+    commit('SET_AUTH_TIMEOUT', timeout);
   },
   async reauth({ commit, dispatch }) {
     try {
@@ -81,26 +71,26 @@ const actions = {
       dispatch('authorize'); 
     } catch (err) {
       if (err.message) {
-        commit('setAccessError', new Error('Odmowa dostępu'));
+        commit('SET_AUTH_ERROR', new Error('Odmowa dostępu'));
       } else {
-        commit('setAccessError', new Error('Nieznany błąd'));
+        commit('SET_AUTH_ERROR', new Error('Nieznany błąd'));
       }
     }
   },
 };
 
 const mutations = {
-  setAccessError(state, error) {
-    state.accessError = error;
+  SET_AUTH_ERROR(state, error) {
+    state.error = error;
   },
-  setSecondsLeft(state, secondsLeft) {
-    state.secondsLeft = secondsLeft;
+  SET_AUTH_SECONDS(state, seconds) {
+    state.seconds = seconds;
   },
-  setAuthTimer(state, timer) {
-    state.authTimer = timer;
+  SET_AUTH_TIMER(state, timer) {
+    state.timer = timer;
   },
-  setAuthTimeout(state, timeout) {
-    state.authTimeout = timeout;
+  SET_AUTH_TIMEOUT(state, timeout) {
+    state.timeout = timeout;
   },
 };
 

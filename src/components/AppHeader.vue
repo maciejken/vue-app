@@ -10,7 +10,9 @@
         </router-link>
       </div>
       <div v-if="isAuthorized" class="AppHeader__left right menu">
-        <div class="AppHeader__timer" @click="reauth()">
+        <div class="AppHeader__timer" @click="reauth()"
+          :class="{ 'AppHeader__timer--blinking': secondsLeft < 60 }"
+        >
           <i class="AppHeader__hourglass hourglass icon"
             :class="hourglassClass"
           ></i>
@@ -33,15 +35,16 @@ export default {
     ...mapActions(['authorize', 'reauth', 'logout']),
   },
   computed: {
-    ...mapGetters(['hourglass', 'isAuthorized', 'timeLeft']),
+    ...mapGetters(['isAuthorized', 'secondsLeft', 'timeLeft']),
     path() {
       return this.$route.path;
     },
     hourglassClass() {
       return {
-        start: this.hourglass === 'start',
-        half: this.hourglass === 'half',
-        end: this.hourglass === 'end',
+        start: this.secondsLeft >= 600,
+        half: this.secondsLeft >= 120 && this.secondsLeft < 600,
+        end: this.secondsLeft < 120,
+        'AppHeader__hourglass--blinking': this.secondsLeft < 60
       };
     }
   },
@@ -51,13 +54,54 @@ export default {
 <style lang="scss" scoped>
   .AppHeader {
     margin-bottom: 10px;
-    &__hourglass {
-      height: 20px;
-    }
-    &__timer {
+
+    &__right, &__left {
       display: flex;
       align-items: center;
+    }
+
+    &__hourglass {
+      height: 20px;
+
+      &--blinking {
+        animation: blink .5s infinite;
+      }
+
+      @keyframes blink {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(.9);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    }
+
+    &__timer {
+      display: flex;
+      align-items: baseline;
+      padding: 3px;
       cursor: pointer;
+
+      &--blinking {
+        color: darken(red, 10%);
+        animation: pulse .5s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(darken(red, 10%), 0.7);
+        }
+        50% {
+          box-shadow: 0 0 0 5px rgba(darken(red, 10%), 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(darken(red, 10%), 0);
+        }
+      }
     }
   }
 </style>

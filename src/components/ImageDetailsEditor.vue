@@ -13,18 +13,22 @@
             {{selectedImage.filename}}         
           </div>
           <div class="ImageDetailsEditor__location">
-            <input type="datetime-local" class="ImageDetailsEditor__location-datetime"
+            <input type="datetime-local"
+              class="ImageDetailsEditor__location-datetime"
               :value="selectedImage.locationDateTime" @input="updateImageLocationDateTime"
             >
-            <input type="location" class="ImageDetailsEditor__location-name"
-              :value="selectedImage.location" @input="updateImageLocation"
+            <input type="location" name="location" ref="location"
+              class="ImageDetailsEditor__location-name"
+              :value="selectedImage.location" @input="updateImage"
             >
           </div>
-          <input type="text" class="ImageDetailsEditor__caption"
-            :value="selectedImage.caption" @input="updateImageCaption"
+          <input type="text" name="caption" ref="caption"
+            class="ImageDetailsEditor__caption"
+            :value="selectedImage.caption" @input="updateImage"
           >
-          <textarea class="ImageDetailsEditor__description"
-            :value="selectedImage.description" @input="updateImageDescription"
+          <textarea name="description" ref="description"
+            class="ImageDetailsEditor__description"
+            :value="selectedImage.description" @input="updateImage"
           ></textarea>        
         </div>        
       </div>
@@ -40,19 +44,33 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import mapInput from '../utils/map-input';
+
 export default {
   computed: {
-    ...mapGetters(['pathToUploads', 'selectedImage']),
+    ...mapGetters([
+      'pathToUploads',
+      'selectedImage',
+      'selectedKeyMap'
+    ]),
   },
   methods: {
     ...mapActions([
       'disableImageEditMode',
       'patchImage',
-      'updateImageCaption',
-      'updateImageLocation',
+      'updateSelectedImage',
       'updateImageLocationDateTime',
-      'updateImageDescription',
     ]),
+    async updateImage({ target }) {
+      const { name, selectionEnd, value } = target;
+      const currentValue = this.selectedImage[name] || '';
+      const keyMap = this.selectedKeyMap;
+      await this.updateSelectedImage({
+        ...this.selectedImage,
+        [name]: mapInput({ currentValue, value, keyMap })
+      });
+      this.$refs[name].selectionEnd = selectionEnd;
+    },
   },
 }
 </script>

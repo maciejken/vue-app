@@ -1,6 +1,5 @@
 import api from '../../api/images';
 import router from '../../router';
-import mapInput from '../../utils/map-input';
 
 const state = {
   images: [],
@@ -101,23 +100,11 @@ const actions = {
   disableImageEditMode({ commit }) {
     commit('setEditModeEnabled', false);
   },
-  updateImageCaption({ commit, getters }, evt) {
-    evt.currentValue = getters.selectedImage.caption || '';
-    evt.keyMap = getters.selectedKeyMap;
-    commit('setSelectedImageCaption', mapInput(evt));
-  },
-  updateImageLocation({ commit, getters }, evt) {
-    evt.currentValue = getters.selectedImage.location || '';
-    evt.keyMap = getters.selectedKeyMap;
-    commit('setSelectedImageLocation', mapInput(evt));
+  updateSelectedImage({ commit }, image) {
+    commit('setSelectedImage', image);
   },
   updateImageLocationDateTime({ commit }, evt) {
     commit('setSelectedImageLocationDateTime', evt.target.value);
-  },
-  updateImageDescription({ commit, getters }, evt) {
-    evt.currentValue = getters.selectedImage.description || '';
-    evt.keyMap = getters.selectedKeyMap;
-    commit('setSelectedImageDescription', mapInput(evt));
   },
 };
 
@@ -137,17 +124,8 @@ const mutations = {
   setEditModeEnabled(state, enabled) {
     state.editModeEnabled = enabled;
   },
-  setSelectedImageCaption(state, caption) {
-    state.selectedImage.caption = caption;
-  },
-  setSelectedImageLocation(state, location) {
-    state.selectedImage.location = location;
-  },
   setSelectedImageLocationDateTime(state, dateTime) {
     state.selectedImage.locationDateTime = dateTime;
-  },
-  setSelectedImageDescription(state, description) {
-    state.selectedImage.description = description;
   },
 };
 

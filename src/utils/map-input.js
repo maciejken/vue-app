@@ -1,20 +1,25 @@
+import diff from 'fast-diff';
 import keyMaps from '../constants/keymaps';
 
-function getKeyMapping(value, keyMap) {
-  if (keyMap) {
-    const key = value.slice(-1);
-    value = value.slice(0, -1) + (keyMaps[keyMap][key] || key);
-  }
-  return value;
+function mapKeys(str, dict) {
+  return str.split('')
+    .map(key => dict && dict[key] ? dict[key] : key)
+    .join('');
 }
 
-export default function mapInput({ target, currentValue, keyMap }) {
-  let value;
-  const truncated = currentValue.slice(0, -1);
-  if (target.value !== truncated) {
-    value = getKeyMapping(target.value, keyMap);
-  } else {
-    value = truncated;
-  }
-  return value;
+export default function mapInput({ currentValue, value, keyMap }) {
+  return diff(currentValue, value)
+    .map(s => {
+      const [mode, str] = s;
+      let v;
+      if (mode === diff.INSERT) {
+        v = mapKeys(str, keyMaps[keyMap]);
+      } else if (mode === diff.EQUAL) {
+        v = str;
+      } else {
+        v = '';
+      }
+      return v;
+    })
+    .join('');
 }

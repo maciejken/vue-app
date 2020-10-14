@@ -9,7 +9,7 @@
           ref="filesInput" @change="handleFileUploads"
         />
         <label for="file"><span class="box__dragndrop">Drag and drop files here</span></label>
-        <button class="box__button" type="submit">Upload</button>
+        <button class="box__button" type="submit">Wyślij</button>
       </div>
       <div class="box__uploading">Uploading…</div>
       <div class="box__success">Done!</div>
