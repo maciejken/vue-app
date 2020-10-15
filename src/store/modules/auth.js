@@ -1,11 +1,11 @@
 import api from '../../api/auth';
 import router from '../../router';
-import { getAuthExpired } from '../../utils/cookie';
+import cookie from '../../utils/cookie';
 
 const state = {
+  expires: null,
   seconds: null,
   timer: null,
-  timeout: null,
   error: null,
 };
 
@@ -42,28 +42,41 @@ const actions = {
     }
   },
   logout({ commit, state }) {
-    document.cookie = getAuthExpired();
+    cookie.clearAuth();
+    clearInterval(state.timer);
     commit('SET_AUTH_SECONDS', null);
-    clearInterval(state.authTimer);
     commit('SET_AUTH_TIMER', null);
     router.push('/login');
   },
   clearAccessError({ commit }) {
     commit('SET_AUTH_ERROR', null);
   },
-  authorize(
-      { commit, dispatch, state },
-      seconds = parseInt(process.env.VUE_APP_AUTH_VALIDITY_SECONDS)
-    ) {
+  authorize({ commit, dispatch, state }) {
     if (state.timer) {
       clearInterval(state.timer);
-      clearTimeout(state.timeout);
     }
-    commit('SET_AUTH_SECONDS', seconds);
-    const timer = setInterval(() => commit('SET_AUTH_SECONDS', state.seconds - 1), 1000);
-    commit('SET_AUTH_TIMER', timer);
-    const timeout = setTimeout(() => dispatch('logout'), seconds * 1000);
-    commit('SET_AUTH_TIMEOUT', timeout);
+    const expires = cookie.getAuthExpiration();
+    if (expires) {
+      commit('SET_AUTH_EXPIRES', expires);
+      let seconds = parseInt((state.expires - Date.now())/1000);
+      commit('SET_AUTH_SECONDS', seconds);
+      const timer = setInterval(() => {
+        seconds = parseInt((state.expires - Date.now())/1000);
+        if (seconds <= 0) {
+          clearInterval(state.timer);
+          dispatch('logout');
+        } else {
+          commit('SET_AUTH_SECONDS', seconds);
+        }
+        return seconds;
+      }, 1000);
+      commit('SET_AUTH_TIMER', timer);      
+    } else {
+      commit('SET_AUTH_EXPIRES', null);
+      commit('SET_AUTH_SECONDS', null);
+      commit('SET_AUTH_TIMER', null);
+    }
+    return expires;
   },
   async reauth({ commit, dispatch }) {
     try {
@@ -83,14 +96,14 @@ const mutations = {
   SET_AUTH_ERROR(state, error) {
     state.error = error;
   },
-  SET_AUTH_SECONDS(state, seconds) {
-    state.seconds = seconds;
+  SET_AUTH_EXPIRES(state, expires) {
+    state.expires = expires;
   },
   SET_AUTH_TIMER(state, timer) {
     state.timer = timer;
   },
-  SET_AUTH_TIMEOUT(state, timeout) {
-    state.timeout = timeout;
+  SET_AUTH_SECONDS(state, seconds) {
+    state.seconds = seconds;
   },
 };
 

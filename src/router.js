@@ -1,6 +1,5 @@
 import VueRouter from 'vue-router';
 import store from './store';
-import { getAuthSeconds } from './utils/cookie';
 import LoginForm from './components/LoginForm.vue';
 import Home from './components/Home.vue';
 import UploadForm from './components/UploadForm.vue';
@@ -36,14 +35,13 @@ const router = new VueRouter({
   ]
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const login = to.matched.some(r => r.name === 'Login');
   if (login) {
     next();
   } else if (!store.getters.isAuthorized) {
-    const seconds = getAuthSeconds();
-    if (seconds) {
-      store.dispatch('authorize', seconds);
+    const expires = await store.dispatch('authorize');
+    if (expires) {
       next();
     } else {
       next('/login');
