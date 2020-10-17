@@ -1,27 +1,23 @@
 <template>
   <div class="ImageDetails">
-    <img :src="`${pathToUploads}/${filename}`" alt=""
-      class="ImageDetails__img" @click="enableImageEditMode"
-    >
-    <ImageDetailsEditor v-if="imageEditModeEnabled" />
+    <figure class="ImageDetails__fig">
+      <img :src="`${pathToUploads}/${filename}`" alt=""
+        class="ImageDetails__img" @click="enableImageEditMode"
+      >
+    </figure>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import ImageDetailsEditor from './ImageDetailsEditor.vue';
 
 export default {
   name: 'ImageDetails',
-  components: {
-    ImageDetailsEditor,
-  },
   props: {
     data: Object,
   },
   computed: {
     ...mapGetters([
-      'imageEditModeEnabled',
       'pathToUploads',
       'selectedImage'
     ]),
@@ -47,8 +43,13 @@ export default {
   .ImageDetails {
     display: flex;
     justify-content: center;
+    &__fig {
+      max-width: 800px;
+      max-height: 800px;      
+    }
     &__img {
-      max-height: 90vh;
+      max-width: 100%;
+      height: auto;
       cursor: pointer;
     }
   }

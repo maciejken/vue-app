@@ -6,17 +6,17 @@
     />
     <div v-if="active || check" class="Thumbnail__checkbox">
       <i class="Thumbnail__check-icon square outline icon" :class="{ check }"
-        @click.prevent="check = !check"
+        @click.prevent="toggleImageChecked(data.filename)"
       ></i>
     </div>
     <div v-if="active" class="Thumbnail__toolbar">
       <span class="Thumbnail__filename">{{data.filename | truncate}}</span>
       <div class="Thumbnail__actions">
         <i class="Thumbnail__action edit icon"
-          @click.prevent="editData"
+          @click.prevent="editImage"
         ></i>
         <i class="Thumbnail__action trash alternate icon"
-          @click.prevent="deleteAndRefresh"
+          @click.prevent="deleteImage"
         ></i>        
       </div>
     </div>
@@ -30,22 +30,23 @@ export default {
   name: "Thumbnail",
   data: () => ({
     active: false,
-    check: false,
   }),
   props: {
     data: Object,
   },
   computed: {
-    ...mapGetters(['pathToUploads']),
+    ...mapGetters(['checkedImages', 'pathToUploads']),
+    check() {
+      return this.checkedImages.includes(this.data.filename);
+    },
   },
   methods: {
-    ...mapActions(['deleteImage', 'fetchImages']),
-    async deleteAndRefresh() {
-      await this.deleteImage(this.data.filename);
-      this.fetchImages();
-    },
-    editData() {
+    ...mapActions(['toggleImageChecked']),
+    editImage() {
       this.$emit('editImage', this.data);
+    },
+    deleteImage() {
+      this.$emit('deleteImage', this.data);
     },
   },
   filters: {

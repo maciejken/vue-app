@@ -15,8 +15,10 @@ const state = {
     createdAt: null,
     updatedAt: null,
   },
+  imagesChecked: [],
   error: null,
-  editModeEnabled: false,
+  editMode: false,
+  deleteMode: false,
 };
 
 const getters = {
@@ -24,8 +26,10 @@ const getters = {
   currentPage: ({ page }) => page,
   pathToUploads: ({ pathToUploads }) => pathToUploads,
   selectedImage: ({ selectedImage }) => selectedImage,
+  checkedImages: ({ imagesChecked }) => imagesChecked,
   imagesError: ({ error }) => error,
-  imageEditModeEnabled: ({ editModeEnabled }) => editModeEnabled,
+  imageEditModeEnabled: ({ editMode }) => editMode,
+  imageDeleteModeEnabled: ({ deleteMode }) => deleteMode,
 };
 
 const actions = {
@@ -39,7 +43,7 @@ const actions = {
     }
   },
   nextPage({ commit, dispatch, state }) {
-    if (state.images.length < 10) {
+    if (state.images.length === 10) {
       commit('setPage', state.page + 1);
       dispatch('fetchImages');      
     }
@@ -66,10 +70,23 @@ const actions = {
       dispatch('fetchImages');
     } catch (err) {
       commit('setError', err);
+    } finally {
+      commit('SET_IMAGE_DELETE_MODE', false);
     }
   },
   selectImage({ commit }, image) {
     commit('setSelectedImage', image);
+  },
+  toggleImageChecked({ commit, state }, filename) {
+    const index = state.imagesChecked.indexOf(filename);
+    let checked;
+    if (index < 0) {
+      checked = state.imagesChecked.concat(filename);
+    } else {
+      checked = state.imagesChecked.slice(index - 1, index)
+        .concat(state.imagesChecked.slice(index + 1));
+    }
+    commit('SET_IMAGES_CHECKED', checked);
   },
   async fetchImage({ commit }, filename) {
     try {
@@ -95,10 +112,16 @@ const actions = {
     }
   },
   enableImageEditMode({ commit }) {
-    commit('setEditModeEnabled', true);
+    commit('SET_IMAGE_EDIT_MODE', true);
   },
   disableImageEditMode({ commit }) {
-    commit('setEditModeEnabled', false);
+    commit('SET_IMAGE_EDIT_MODE', false);
+  },
+  enableImageDeleteMode({ commit }) {
+    commit('SET_IMAGE_DELETE_MODE', true);
+  },
+  disableImageDeleteMode({ commit }) {
+    commit('SET_IMAGE_DELETE_MODE', false);
   },
   updateSelectedImage({ commit }, image) {
     commit('setSelectedImage', image);
@@ -121,8 +144,14 @@ const mutations = {
   setSelectedImage(state, image) {
     state.selectedImage = image;
   },
-  setEditModeEnabled(state, enabled) {
-    state.editModeEnabled = enabled;
+  SET_IMAGES_CHECKED(state, filenames) {
+    state.imagesChecked = filenames;
+  },
+  SET_IMAGE_EDIT_MODE(state, enabled) {
+    state.editMode = enabled;
+  },
+  SET_IMAGE_DELETE_MODE(state, enabled) {
+    state.deleteMode = enabled;
   },
   setSelectedImageLocationDateTime(state, dateTime) {
     state.selectedImage.locationDateTime = dateTime;
