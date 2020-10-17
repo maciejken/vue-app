@@ -1,52 +1,57 @@
 <template>
   <div class="ImageDetailsEditor">
-    <form class="ImageDetailsEditor__form" @submit.prevent="patchImage">
-      <div class="ImageDetailsEditor__content">
-        <div class="ImageDetailsEditor__thumbnail">
-          <img  class="ImageDetailsEditor__img"
-            :src="`${pathToUploads}/${selectedImage.filename}/thumbnail`"
-            alt=""
-          >
-        </div>
-        <div class="ImageDetailsEditor__details">
-          <div class="ImageDetailsEditor__filename">
-            {{selectedImage.filename}}         
+    <modal @close="disableImageEditMode" @save="patchImage">
+      <template v-slot:body>
+        <form class="ImageDetailsEditor__form">
+          <div class="ImageDetailsEditor__content">
+            <div class="ImageDetailsEditor__thumbnail">
+              <img  class="ImageDetailsEditor__img"
+                :src="`${pathToUploads}/${selectedImage.filename}/thumbnail`"
+                alt=""
+              >
+            </div>
+            <div class="ImageDetailsEditor__details">
+              <div class="ImageDetailsEditor__filename">
+                {{selectedImage.filename}}         
+              </div>
+              <div class="ImageDetailsEditor__location">
+                <input type="datetime-local"
+                  class="ImageDetailsEditor__location-datetime"
+                  :value="selectedImage.locationDateTime" @input="updateImageLocationDateTime"
+                >
+                <input type="location" name="location" ref="location"
+                  class="ImageDetailsEditor__location-name"
+                  :value="selectedImage.location" @input="updateImage"
+                >
+              </div>
+              <input type="text" name="caption" ref="caption"
+                class="ImageDetailsEditor__caption"
+                :value="selectedImage.caption" @input="updateImage"
+              >
+              <textarea name="description" ref="description"
+                class="ImageDetailsEditor__description"
+                :value="selectedImage.description" @input="updateImage"
+              ></textarea>        
+            </div>        
           </div>
-          <div class="ImageDetailsEditor__location">
-            <input type="datetime-local"
-              class="ImageDetailsEditor__location-datetime"
-              :value="selectedImage.locationDateTime" @input="updateImageLocationDateTime"
-            >
-            <input type="location" name="location" ref="location"
-              class="ImageDetailsEditor__location-name"
-              :value="selectedImage.location" @input="updateImage"
-            >
+          <div class="ImageDetailsEditor__buttons">
           </div>
-          <input type="text" name="caption" ref="caption"
-            class="ImageDetailsEditor__caption"
-            :value="selectedImage.caption" @input="updateImage"
-          >
-          <textarea name="description" ref="description"
-            class="ImageDetailsEditor__description"
-            :value="selectedImage.description" @input="updateImage"
-          ></textarea>        
-        </div>        
-      </div>
-      <div class="ImageDetailsEditor__buttons">
-        <button class="ImageDetailsEditor__btn"
-          @click.prevent="disableImageEditMode"
-        >Zamknij</button>
-        <button type="submit" class="ImageDetailsEditor__btn">Zapisz</button>
-      </div>
-    </form>
+        </form>
+      </template>
+    </modal>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import Modal from './Modal';
 import mapInput from '../utils/map-input';
 
 export default {
+  name: 'ImageDetailsEditor',
+  components: {
+    Modal,
+  },
   computed: {
     ...mapGetters([
       'pathToUploads',
@@ -77,17 +82,12 @@ export default {
 
 <style lang="scss" scoped>
   .ImageDetailsEditor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgba(#fff, .75);
-    width: 100vw;
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 
     &__form {
+      width: 640px;
       display: flex;
       flex-direction: column;
       justify-content: space-around;

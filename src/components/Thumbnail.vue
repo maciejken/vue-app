@@ -61,6 +61,7 @@ export default {
   .Thumbnail {
     width: 200px;
     height: 200px;
+    margin: 2px;
     cursor: pointer;
     color: #000;
     position: relative;

@@ -1,20 +1,29 @@
 const state = {
   keyMap: 'dvorakToPuk',
   colorTheme: 'light',
+  edit: false,
 };
 
 const getters = {
   selectedKeyMap: ({ keyMap }) => keyMap,
   selectedColorTheme: ({ theme }) => theme,
+  showSettings: ({ edit }) => edit,
 };
 
 const actions = {
-  selectKeyMap({ commit }, keyMap) {
-    commit('SET_KEY_MAP', keyMap);
+  selectKeymap({ commit }, evt) {
+    commit('SET_KEY_MAP', evt.target.id);
+    commit('SET_EDIT', false);
   },
   selectColorTheme({ commit }, theme) {
     commit('SET_COLOR_THEME', theme);
-  }
+  },
+  showSettings({ commit }) {
+    commit('SET_EDIT', true);
+  },
+  hideSettings({ commit }) {
+    commit('SET_EDIT', false);
+  },
 };
 
 const mutations = {
@@ -23,6 +32,9 @@ const mutations = {
   },
   SET_COLOR_THEME(state, theme) {
     state.colorTheme = theme;
+  },
+  SET_EDIT(state, visible) {
+    state.edit = visible;
   },
 };
 
