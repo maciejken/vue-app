@@ -12,25 +12,22 @@
             </div>
             <div class="ImageDetailsEditor__details">
               <div class="ImageDetailsEditor__filename">
-                {{selectedImage.filename}}         
+                {{selectedImage.filename}} ({{selectedImageMegabytes}} MB)       
               </div>
-              <div class="ImageDetailsEditor__location">
-                <input type="datetime-local"
-                  class="ImageDetailsEditor__location-datetime"
-                  :value="selectedImage.locationDateTime" @input="updateImageLocationDateTime"
-                >
-                <input type="location" name="location" ref="location"
-                  class="ImageDetailsEditor__location-name"
-                  :value="selectedImage.location" @input="updateImage"
-                >
-              </div>
+              <input type="location" name="location" ref="location"
+                class="ImageDetailsEditor__input ImageDetailsEditor__location"
+                :value="selectedImage.location" @input="updateImage"
+                placeholder="Edit location"
+              >
               <input type="text" name="caption" ref="caption"
-                class="ImageDetailsEditor__caption"
+                class="ImageDetailsEditor__input ImageDetailsEditor__caption"
                 :value="selectedImage.caption" @input="updateImage"
+                placeholder="Edit caption"
               >
               <textarea name="description" ref="description"
-                class="ImageDetailsEditor__description"
+                class="ImageDetailsEditor__input ImageDetailsEditor__description"
                 :value="selectedImage.description" @input="updateImage"
+                placeholder="Edit description"
               ></textarea>        
             </div>        
           </div>
@@ -56,6 +53,7 @@ export default {
     ...mapGetters([
       'pathToUploads',
       'selectedImage',
+      'selectedImageMegabytes',
       'selectedKeyMap'
     ]),
   },
@@ -120,18 +118,12 @@ export default {
       font-size: 18px;
     }
 
+    &__input {
+      height: 28px;
+    }
+
     &__location {
       width: 100%;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    &__location-datetime {
-      width: 200px;
-    }
-
-    &__location-name {
-      width: 180px;
     }
 
     &__description {

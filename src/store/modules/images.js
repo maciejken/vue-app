@@ -10,8 +10,12 @@ const state = {
     userId: null,
     caption: null,
     location: null,
-    locationDateTime: null,
+    datetime: null,
     description: null,
+    camera: null,
+    width: null,
+    height: null,
+    size: null,
     createdAt: null,
     updatedAt: null,
   },
@@ -26,6 +30,12 @@ const getters = {
   currentPage: ({ page }) => page,
   pathToUploads: ({ pathToUploads }) => pathToUploads,
   selectedImage: ({ selectedImage }) => selectedImage,
+  selectedImageCaptureDate: ({ selectedImage }) => new Date(selectedImage.datetime).toLocaleString(),
+  selectedImageDimensions: ({ selectedImage }) => {
+    const { width, height } = selectedImage;
+    return `${width} x ${height}`;
+  },
+  selectedImageMegabytes: ({ selectedImage }) => Math.round(10 * selectedImage.size/(1024 * 1024))/10,
   checkedImages: ({ imagesChecked }) => imagesChecked,
   imagesError: ({ error }) => error,
   imageEditModeEnabled: ({ editMode }) => editMode,
@@ -106,7 +116,7 @@ const actions = {
       } else {
         throw new Error('image has no filename');
       }
-      commit('setEditModeEnabled', false);
+      commit('SET_IMAGE_EDIT_MODE', false);
     } catch (err) {
       commit('setError', err);
     }
