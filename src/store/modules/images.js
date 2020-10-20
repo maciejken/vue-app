@@ -30,7 +30,7 @@ const getters = {
   currentPage: ({ page }) => page,
   pathToUploads: ({ pathToUploads }) => pathToUploads,
   selectedImage: ({ selectedImage }) => selectedImage,
-  selectedImageCaptureDate: ({ selectedImage }) => new Date(selectedImage.datetime).toLocaleString(),
+  selectedImageCaptureDate: ({ selectedImage }) => new Date(selectedImage.datetime).toLocaleString('pl'),
   selectedImageDimensions: ({ selectedImage }) => {
     const { width, height } = selectedImage;
     return `${width} x ${height}`;

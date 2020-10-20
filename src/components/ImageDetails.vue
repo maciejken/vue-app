@@ -42,8 +42,8 @@ export default {
     imageOrientation() {
       const { width, height } = this.selectedImage;
       return {
-        'ImageDetails__img--portrait': width < height,
-        'ImageDetails__img--landscape': width > height,
+        'ImageDetails__fig--portrait': width < height,
+        'ImageDetails__fig--landscape': width > height,
       };
     },
   },
@@ -91,7 +91,7 @@ export default {
       position: absolute;
       height: 64px;
       width: 100%;
-      background-color: rgba(#fff, .8);
+      background-color: rgba(#fff, .9);
       line-height: 64px;
       text-align: center;
     }
@@ -101,7 +101,7 @@ export default {
     }
     &__info {
       bottom: 0;
-      font-size: 18px;
+      font-size: 14px;
     }
   }
 </style>
