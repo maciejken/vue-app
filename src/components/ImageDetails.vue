@@ -12,9 +12,18 @@
         {{selectedImage.caption}}
       </caption>
       <div class="ImageDetails__info">
-        Aparat: {{selectedImage.camera}} //
-        Data: {{selectedImageCaptureDate}} //
-        Rozmiar: {{selectedImageDimensions}} ({{selectedImageMegabytes}} MB)
+        <div class="ImageDetails__info-item">
+          <i class="camera icon"></i> {{selectedImage.camera}}
+        </div>
+        <div class="ImageDetails__info-item">
+          <i class="calendar icon"></i> {{selectedImageCaptureDate}}
+        </div>
+        <div class="ImageDetails__info-item">
+          <i class="image icon"></i> {{selectedImageDimensions}} ({{selectedImageMegabytes}} MB)
+        </div>
+        <div class="ImageDetails__info-item">
+          <i class="map marker alternate icon"></i> {{selectedImage.location}}
+        </div>
       </div>
     </figure>
   </div>
@@ -72,7 +81,7 @@ export default {
       &:hover {
         .ImageDetails__caption,
         .ImageDetails__info {
-          display: block;
+          display: flex;
         }
       }
       &--portrait {
@@ -89,19 +98,27 @@ export default {
     &__caption, &__info {
       display: none;
       position: absolute;
-      height: 64px;
       width: 100%;
       background-color: rgba(#fff, .9);
-      line-height: 64px;
-      text-align: center;
+      align-items: center;
     }
     &__caption {
+      height: 64px;
       top: 0;
       font-size: 24px;
+      justify-content: center;
     }
     &__info {
+      height: 128px;
       bottom: 0;
-      font-size: 14px;
+      font-size: 18px;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+    &__info-item {
+      width: 300px;
+      display: flex;
+      padding: 0 0 0 36px;
     }
   }
 </style>

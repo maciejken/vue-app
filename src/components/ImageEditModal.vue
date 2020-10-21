@@ -17,17 +17,17 @@
               <input type="location" name="location" ref="location"
                 class="ImageDetailsEditor__input ImageDetailsEditor__location"
                 :value="selectedImage.location" @input="updateImage"
-                placeholder="Edit location"
+                placeholder="Dodaj miejsce"
               >
               <input type="text" name="caption" ref="caption"
                 class="ImageDetailsEditor__input ImageDetailsEditor__caption"
                 :value="selectedImage.caption" @input="updateImage"
-                placeholder="Edit caption"
+                placeholder="Dodaj tytuł"
               >
               <textarea name="description" ref="description"
                 class="ImageDetailsEditor__input ImageDetailsEditor__description"
                 :value="selectedImage.description" @input="updateImage"
-                placeholder="Edit description"
+                placeholder="Dodaj opis"
               ></textarea>        
             </div>        
           </div>
