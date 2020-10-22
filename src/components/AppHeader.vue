@@ -1,17 +1,17 @@
 <template>
   <div class="AppHeader">
     <div class="ui secondary pointing menu">
-      <div class="AppHeader__right left menu">
+      <div v-if="isAuthorized" class="AppHeader__left left menu">
         <router-link to="/uploads" class="item" active-class="active">
           <i class="images icon"></i>
           <span class="AppHeader__item-label">Galeria</span>
         </router-link>
-        <router-link v-if="isAuthorized" to="/upload-files" class="item" active-class="active">
+        <router-link to="/upload-files" class="item" active-class="active">
           <i class="upload icon"></i>
           <span class="AppHeader__item-label">Dodaj obrazy</span>
         </router-link>
       </div>
-      <div v-if="isAuthorized" class="AppHeader__left right menu">
+      <div v-if="isAuthorized" class="AppHeader__right right menu">
         <div class="AppHeader__settings item" @click="showSettings">
           <i class="AppHeader__cog cog icon"></i>
           <span class="AppHeader__item-label">Ustawienia</span>
@@ -28,6 +28,16 @@
           <i class="sign-out icon"></i>
           <span class="AppHeader__item-label">Wyjdź</span>
         </a>
+      </div>
+      <div v-else class="AppHeader__right right menu">
+        <router-link to="/login" class="item" active-class="active">
+          <i class="sign-in icon"></i>
+          <div class="AppHeader__item-label">Logowanie</div>
+        </router-link>
+        <router-link to="/sign-up" class="item" active-class="active">
+          <i class="user plus icon"></i>
+          <div class="AppHeader__item-label">Rejestracja</div>
+        </router-link>
       </div>
     </div>
   </div>

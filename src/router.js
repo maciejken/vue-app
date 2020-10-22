@@ -1,6 +1,7 @@
 import VueRouter from 'vue-router';
 import store from './store';
 import LoginForm from './components/LoginForm.vue';
+import SignUpForm from './components/SignUpForm.vue';
 import Home from './components/Home.vue';
 import UploadForm from './components/UploadForm.vue';
 import ImageDetails from './components/ImageDetails.vue';
@@ -12,6 +13,11 @@ const router = new VueRouter({
       path: '/login',
       name: 'Login',
       component: LoginForm,
+    },
+    {
+      path: '/sign-up',
+      name: 'Sign Up',
+      component: SignUpForm,
     },
     {
       path: '/',
@@ -36,10 +42,10 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const login = to.matched.some(r => r.name === 'Login');
-  if (login) {
+  const noauth = to.matched.some(r => r.name === 'Login' || r.name === 'Sign Up');
+  if (noauth) {
     next();
-  } else if (!store.getters.isAuthorized) {
+  } else if (!noauth && !store.getters.isAuthorized) {
     const expires = await store.dispatch('authorize');
     if (expires) {
       next();
