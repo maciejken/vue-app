@@ -1,10 +1,12 @@
 const state = {
+  apiUrl: process.env.VUE_APP_API_URL,
   keyMap: 'dvorakToPuk',
   colorTheme: 'light',
   edit: false,
 };
 
 const getters = {
+  pathToUploads: ({ apiUrl }) => `${apiUrl}/uploads`,
   selectedKeyMap: ({ keyMap }) => keyMap,
   selectedColorTheme: ({ theme }) => theme,
   showSettings: ({ edit }) => edit,

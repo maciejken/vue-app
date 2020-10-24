@@ -1,15 +1,15 @@
 import http from './http';
 
 export default {
-  authenticate(auth) {
+  authenticate({ apiUrl, auth }) {
     let opts;
     if (auth) {
       opts = {
         headers: {
-          Authorization: `Basic ${btoa(`${auth.username}:${auth.password}`)}`
+          Authorization: `Basic ${btoa(`${auth.email}:${auth.password}`)}`
         },        
       };
     }
-    return http.get(`${process.env.VUE_APP_API_URL}/auth`, opts);
+    return http.get(`${apiUrl}/auth`, opts);
   },
 };

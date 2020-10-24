@@ -12,7 +12,7 @@
       >
         <Thumbnail
           :data="img"
-          @click.native="selectImage(img)"
+          @click.native="updateSelectedImage(img)"
           @editImage="editImage"
           @deleteImage="deleteImage"
         />        
@@ -44,16 +44,16 @@ export default {
       'previousPage',
       'authorize',
       'logout',
-      'selectImage',
+      'updateSelectedImage',
       'enableImageEditMode',
       'enableImageDeleteMode',
     ]),
     editImage(image) {
-      this.selectImage(image);
+      this.updateSelectedImage(image);
       this.enableImageEditMode();
     },
     deleteImage(image) {
-      this.selectImage(image);
+      this.updateSelectedImage(image);
       this.enableImageDeleteMode();
     },
   },

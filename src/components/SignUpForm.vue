@@ -1,15 +1,14 @@
 <template>
-  <div class="SignUpForm">
-    Sign-up form
-  </div>
+  <UserForm :signUp="true" />
 </template>
 
 <script>
+import UserForm from './UserForm.vue';
+
 export default {
-  
+  name: 'SignUpForm',
+  components: {
+    UserForm,
+  },
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

@@ -28,9 +28,10 @@ const getters = {
 };
 
 const actions = {
-  async login({ commit, dispatch }, { username, password }) {
+  async login({ commit, dispatch, rootState }, auth) {
     try {
-      await api.authenticate({ username, password });
+      const { apiUrl } = rootState.settings;
+      await api.authenticate({ apiUrl, auth });
       dispatch('authorize');
       router.push('/');
     } catch (err) {
@@ -78,9 +79,10 @@ const actions = {
     }
     return expires;
   },
-  async reauth({ commit, dispatch }) {
+  async reauth({ commit, dispatch, rootState }) {
     try {
-      await api.authenticate();
+      const { apiUrl } = rootState.settings;
+      await api.authenticate({ apiUrl });
       dispatch('authorize'); 
     } catch (err) {
       if (err.message) {

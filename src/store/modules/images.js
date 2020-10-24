@@ -4,7 +4,6 @@ import router from '../../router';
 const state = {
   images: [],
   page: 1,
-  pathToUploads: process.env.VUE_APP_PATH_TO_UPLOADS,
   selectedImage: {
     filename: null,
     userId: null,
@@ -28,7 +27,6 @@ const state = {
 const getters = {
   uploadedImages: ({ images }) => images,
   currentPage: ({ page }) => page,
-  pathToUploads: ({ pathToUploads }) => pathToUploads,
   selectedImage: ({ selectedImage }) => selectedImage,
   selectedImageCaptureDate: ({ selectedImage }) => new Date(selectedImage.datetime).toLocaleString('pl'),
   selectedImageDimensions: ({ selectedImage }) => {
@@ -43,9 +41,11 @@ const getters = {
 };
 
 const actions = {
-  async fetchImages({ commit, state }) {
+  async fetchImages({ commit, rootState, state }) {
     try {
-      const images = await api.fetchImages({ page: state.page });
+      const { apiUrl } = rootState.settings;
+      const query = { page: state.page };
+      const images = await api.fetchImages({ apiUrl, query });
       commit('setImages', images);
       commit('setError', null);
     } catch (err) {
@@ -64,18 +64,20 @@ const actions = {
       dispatch('fetchImages');      
     }
   },
-  async uploadImages({ commit }, formData) {
+  async uploadImages({ commit, rootState }, formData) {
     try {
-      await api.uploadImages(formData);
+      const { apiUrl } = rootState.settings;
+      await api.uploadImages({ apiUrl, formData });
       commit('setError', null);
       router.push('/uploads');
     } catch (err) {
       commit('setError', err);
     }
   },
-  async deleteImage({ commit, dispatch }, filename) {
+  async deleteImage({ commit, dispatch, rootState }, filename) {
     try {
-      await api.deleteImage(filename);
+      const { apiUrl } = rootState.settings;
+      await api.deleteImage({ apiUrl, filename });
       commit('setError', null);
       dispatch('fetchImages');
     } catch (err) {
@@ -83,9 +85,6 @@ const actions = {
     } finally {
       commit('SET_IMAGE_DELETE_MODE', false);
     }
-  },
-  selectImage({ commit }, image) {
-    commit('setSelectedImage', image);
   },
   toggleImageChecked({ commit, state }, filename) {
     const index = state.imagesChecked.indexOf(filename);
@@ -98,19 +97,24 @@ const actions = {
     }
     commit('SET_IMAGES_CHECKED', checked);
   },
-  async fetchImage({ commit }, filename) {
+  async fetchImage({ commit, rootState }, filename) {
     try {
-      const image = await api.fetchImage(filename);
+      const { apiUrl } = rootState.settings;
+      const image = await api.fetchImage({ apiUrl, filename });
       commit('setSelectedImage', image);
     } catch (err) {
       commit('setError', err);
     }
   },
-  async patchImage({ commit, dispatch, getters }) {
+  async patchImage({ commit, dispatch, rootState }) {
     try {
-      const image = getters.selectedImage;
-      if (image.filename) {
-        const updatedImage = await api.patchImage(image);
+      const { apiUrl } = rootState.settings;
+      const { selectedImage } = rootState.images;
+      if (selectedImage.filename) {
+        const updatedImage = await api.patchImage({
+          apiUrl,
+          filename: selectedImage.filename,
+        });
         commit('setSelectedImage', updatedImage);
         dispatch('fetchImages');
       } else {

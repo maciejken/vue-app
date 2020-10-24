@@ -1,24 +1,22 @@
 import qs from 'qs';
 import http from './http';
 
-const apiUrl = process.env.VUE_APP_API_URL;
-
 export default {
-  async fetchImages(query) {
+  async fetchImages({ apiUrl, query }) {
     return http.get(`${apiUrl}/images?${qs.stringify(query)}`);
   },
-  async uploadImages(formData) {
+  async uploadImages({ apiUrl, formData }) {
     return http.post(`${apiUrl}/uploads`, {
       body: formData
     });
   },
-  async deleteImage(filename) {
+  async deleteImage({ apiUrl, filename }) {
     return http.delete(`${apiUrl}/uploads/${filename}`);
   },
-  async fetchImage(filename) {
+  async fetchImage({ apiUrl, filename }) {
     return http.get(`${apiUrl}/images/${filename}`);
   },
-  async patchImage(image) {
+  async patchImage({ apiUrl, image }) {
     return http.patch(`${apiUrl}/images/${image.filename}`, {
       body: JSON.stringify(image),
       headers: {
