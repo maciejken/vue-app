@@ -31,8 +31,6 @@
               ></textarea>        
             </div>        
           </div>
-          <div class="ImageDetailsEditor__buttons">
-          </div>
         </form>
       </template>
     </modal>

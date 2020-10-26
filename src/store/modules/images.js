@@ -113,7 +113,7 @@ const actions = {
       if (selectedImage.filename) {
         const updatedImage = await api.patchImage({
           apiUrl,
-          filename: selectedImage.filename,
+          image: selectedImage,
         });
         commit('setSelectedImage', updatedImage);
         dispatch('fetchImages');
