@@ -5,17 +5,19 @@
       alt=""
     />
     <div v-if="active || check" class="Thumbnail__checkbox">
-      <i class="Thumbnail__check-icon square outline icon" :class="{ check }"
+      <i v-if="canEdit"
+        class="Thumbnail__check-icon square outline icon"
+        :class="{ check }"
         @click.prevent="toggleImageChecked(data.filename)"
       ></i>
     </div>
     <div v-if="active" class="Thumbnail__toolbar">
-      <span class="Thumbnail__filename">{{data.filename | truncate}}</span>
+      <span class="Thumbnail__filename">{{data.filename | truncate(maxFilenameLength)}}</span>
       <div class="Thumbnail__actions">
-        <i class="Thumbnail__action edit icon"
+        <i v-if="canEdit" class="Thumbnail__action edit icon"
           @click.prevent="editImage"
         ></i>
-        <i class="Thumbnail__action trash alternate icon"
+        <i v-if="canDelete" class="Thumbnail__action trash alternate icon"
           @click.prevent="deleteImage"
         ></i>        
       </div>
@@ -35,10 +37,27 @@ export default {
     data: Object,
   },
   computed: {
-    ...mapGetters(['checkedImages', 'pathToUploads']),
+    ...mapGetters(['checkedImages', 'pathToUploads', 'userGroups', 'userId']),
+    canEdit() {
+      return this.userGroups.includes(this.data.groupId);
+    },
+    canDelete() {
+      return this.userId === this.data.userId;
+    },
     check() {
       return this.checkedImages.includes(this.data.filename);
     },
+    maxFilenameLength() {
+      let maxLength;
+      if (this.canEdit && this.canDelete) {
+        maxLength = 15;
+      } else if (this.canEdit || this.canDelete) {
+        maxLength = 20;
+      } else {
+        maxLength = 25;
+      }
+      return maxLength;
+    }
   },
   methods: {
     ...mapActions(['toggleImageChecked']),
@@ -50,8 +69,8 @@ export default {
     },
   },
   filters: {
-    truncate(s) {
-      return s.length > 15 ? `${s.slice(0, 15)}...` : s;
+    truncate(s, maxLength) {
+      return s.length > maxLength ? `${s.slice(0, maxLength)}...` : s;
     },
   },
 

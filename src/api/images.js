@@ -5,8 +5,8 @@ export default {
   async fetchImages({ apiUrl, query }) {
     return http.get(`${apiUrl}/images?${qs.stringify(query)}`);
   },
-  async uploadImages({ apiUrl, formData }) {
-    return http.post(`${apiUrl}/uploads`, {
+  async uploadImages({ apiUrl, formData, groupId }) {
+    return http.post(`${apiUrl}/uploads?groupId=${groupId}`, {
       body: formData
     });
   },

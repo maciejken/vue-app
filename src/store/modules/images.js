@@ -7,6 +7,7 @@ const state = {
   selectedImage: {
     filename: null,
     userId: null,
+    groupId: null,
     caption: null,
     location: null,
     datetime: null,
@@ -36,8 +37,8 @@ const getters = {
   selectedImageMegabytes: ({ selectedImage }) => Math.round(10 * selectedImage.size/(1024 * 1024))/10,
   checkedImages: ({ imagesChecked }) => imagesChecked,
   imagesError: ({ error }) => error,
-  imageEditModeEnabled: ({ editMode }) => editMode,
-  imageDeleteModeEnabled: ({ deleteMode }) => deleteMode,
+  editImageMode: ({ editMode }) => editMode,
+  deleteImageMode: ({ deleteMode }) => deleteMode,
 };
 
 const actions = {
@@ -67,7 +68,8 @@ const actions = {
   async uploadImages({ commit, rootState }, formData) {
     try {
       const { apiUrl } = rootState.settings;
-      await api.uploadImages({ apiUrl, formData });
+      const groupId = rootState.users.userGroups[0];
+      await api.uploadImages({ apiUrl, formData, groupId });
       commit('setError', null);
       router.push('/uploads');
     } catch (err) {

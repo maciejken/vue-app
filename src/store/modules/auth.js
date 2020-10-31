@@ -31,8 +31,10 @@ const actions = {
   async login({ commit, dispatch, rootState }, auth) {
     try {
       const { apiUrl } = rootState.settings;
-      await api.authenticate({ apiUrl, auth });
+      const { groups, sub } = await api.authenticate({ apiUrl, auth });
       dispatch('authorize');
+      dispatch('updateUserId', parseInt(sub));
+      dispatch('updateUserGroups', groups);
       router.push('/');
     } catch (err) {
       if (err.message) {
@@ -42,11 +44,14 @@ const actions = {
       }
     }
   },
-  logout({ commit, state }) {
+  logout({ commit, dispatch, state }) {
     cookie.clearAuth();
     clearInterval(state.timer);
     commit('SET_AUTH_SECONDS', null);
     commit('SET_AUTH_TIMER', null);
+    dispatch('updateUserId', null);
+    dispatch('updateUserGroups', []);
+    dispatch('hideSidebar');
     router.push('/login');
   },
   clearAccessError({ commit }) {
