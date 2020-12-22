@@ -9,7 +9,7 @@
           ref="filesInput" @change="handleFileUploads"
         />
         <label for="file"><span class="box__dragndrop">Drag and drop files here</span></label>
-        <button class="box__button" type="submit">Wyślij</button>
+        <button class="box__button" type="submit" :disabled="!selectedGroupId">Wyślij</button>
       </div>
       <div class="box__uploading">Uploading…</div>
       <div class="box__success">Done!</div>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: "UploadForm",
@@ -27,8 +27,11 @@ export default {
   data: () => ({
     files: '',
   }),
+  computed: {
+    ...mapGetters(['selectedGroupId', 'userGroups']),
+  },
   methods: {
-    ...mapActions(['uploadImages']),
+    ...mapActions(['fetchUserGroups', 'uploadImages']),
     handleFileUploads() {
       this.files = this.$refs.filesInput.files;
     },
@@ -41,6 +44,9 @@ export default {
       
       await this.uploadImages(formData);
     },
+  },
+  beforeMount() {
+    this.fetchUserGroups();
   },
 }
 </script>

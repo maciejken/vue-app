@@ -10,7 +10,7 @@ const getters = {
   pathToUploads: ({ apiUrl }) => `${apiUrl}/uploads`,
   selectedKeyMap: ({ keyMap }) => keyMap,
   selectedColorTheme: ({ theme }) => theme,
-  editSettingsMode: ({ editMode }) => editMode,
+  settingsEditMode: ({ editMode }) => editMode,
   sidebarVisible: ({ sidebarVisible }) => sidebarVisible,
 };
 
@@ -23,6 +23,7 @@ const actions = {
     commit('SET_COLOR_THEME', theme);
   },
   showSettings({ commit }) {
+    commit('SET_SIDEBAR_VISIBLE', false);
     commit('SET_EDIT_MODE', true);
   },
   hideSettings({ commit }) {
@@ -34,6 +35,11 @@ const actions = {
   hideSidebar({ commit }) {
     commit('SET_SIDEBAR_VISIBLE', false);
   },
+  hideModals({ dispatch }) {
+    dispatch('hideSettings');
+    dispatch('disableImageEditMode');
+    dispatch('disableImageDeleteMode');
+  }
 };
 
 const mutations = {

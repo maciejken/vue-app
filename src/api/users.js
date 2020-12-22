@@ -9,4 +9,7 @@ export default {
       body: JSON.stringify(user)
     });
   },
+  getUserGroups({ apiUrl, userId }) {
+    return http.get(`${apiUrl}/users/${userId}/groups`);
+  },
 }

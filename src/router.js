@@ -34,7 +34,7 @@ const router = new VueRouter({
       component: ImageDetails,
     },
     {
-      path: '/upload-files',
+      path: '/upload-form',
       name: 'Upload',
       component: UploadForm,
     },

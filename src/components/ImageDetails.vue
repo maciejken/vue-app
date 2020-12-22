@@ -3,8 +3,11 @@
     <figure class="ImageDetails__fig"
       :class="imageOrientation"
     >
-      <img :src="`${pathToUploads}/${filename}`" alt=""
-        class="ImageDetails__img" @click="enableImageEditMode"
+      <img v-if="selectedImage.filename"
+        :src="`${pathToUploads}/${selectedImage.filename}`"
+        :alt="selectedImage.caption"
+        class="ImageDetails__img"
+        @click="enableImageEditMode"
       >
       <caption v-if="selectedImage.caption"
         class="ImageDetails__caption"
@@ -13,16 +16,16 @@
       </caption>
       <div class="ImageDetails__info">
         <div class="ImageDetails__info-item">
-          <i class="camera icon"></i> {{selectedImage.camera}}
+          <i class="camera icon"></i> {{imageCamera}}
         </div>
         <div class="ImageDetails__info-item">
-          <i class="calendar icon"></i> {{selectedImageCaptureDate}}
+          <i class="calendar icon"></i> {{imageDatetime}}
         </div>
         <div class="ImageDetails__info-item">
-          <i class="image icon"></i> {{selectedImageDimensions}} ({{selectedImageMegabytes}} MB)
+          <i class="image icon"></i> {{imageWidth}} x {{imageHeight}} ({{imageFileSize}} MB)
         </div>
         <div class="ImageDetails__info-item">
-          <i class="map marker alternate icon"></i> {{selectedImage.location}}
+          <i class="map marker alternate icon"></i> {{imageLocation}}
         </div>
       </div>
     </figure>
@@ -31,6 +34,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { ImageDetail } from '../constants';
 
 export default {
   name: 'ImageDetails',
@@ -41,19 +45,36 @@ export default {
     ...mapGetters([
       'pathToUploads',
       'selectedImage',
-      'selectedImageCaptureDate',
-      'selectedImageDimensions',
-      'selectedImageMegabytes',
+      'selectedImageDetails',
     ]),
     filename() {
-      return this.$route.params.filename;
+      return this.selectedImage.filename;
+    },
+    imageWidth() {
+      return this.getImageDetail(ImageDetail.width);
+    },
+    imageHeight() {
+      return this.getImageDetail(ImageDetail.height);
     },
     imageOrientation() {
-      const { width, height } = this.selectedImage;
       return {
-        'ImageDetails__fig--portrait': width < height,
-        'ImageDetails__fig--landscape': width > height,
+        'ImageDetails__fig--portrait': this.imageWidth < this.imageHeight,
+        'ImageDetails__fig--landscape': this.imageWidth > this.imageHeight,
       };
+    },
+    imageDatetime() {
+      const datetime = this.getImageDetail(ImageDetail.datetime);
+      return new Date(datetime).toLocaleString('pl');
+    },
+    imageLocation() {
+      return this.getImageDetail(ImageDetail.location);
+    },
+    imageCamera() {
+      return this.getImageDetail(ImageDetail.camera);
+    },
+    imageFileSize() {
+      const size = this.getImageDetail(ImageDetail.size);
+      return Math.round(10 * size/(1024 * 1024))/10;
     },
   },
   methods: {
@@ -61,12 +82,13 @@ export default {
       'fetchImage',
       'enableImageEditMode',
     ]),
+    getImageDetail(name) {
+      return this.selectedImageDetails.find(d => d.name === name)?.content;
+    },
   },
   beforeMount() {
-    if (!this.selectedImage.filename) {
-      this.fetchImage(this.filename);
-    }
-  }
+    this.fetchImage(this.$route.params.filename);
+  },
 }
 </script>
 
@@ -76,6 +98,7 @@ export default {
     display: flex;
     justify-content: center;
     &__fig {
+      margin: 0;
       max-width: 800px;
       position: relative;
       &:hover {

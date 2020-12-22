@@ -1,5 +1,5 @@
 <template>
-  <div class="minimal pushable">
+  <div class="minimal pushable dimmable" :class="dimmed">
     <div class="ui top fixed inverted main menu">
       <div class="ui container">
         <a class="launch icon item" @click="showSidebar">
@@ -21,7 +21,7 @@
       >
         <i class="images icon"></i>Galeria
       </router-link>
-      <router-link v-if="isAuthorized" to="/upload-files"
+      <router-link v-if="isAuthorized" to="/upload-form"
         class="item" active-class="active" @click.native="hideSidebar"
       >
         <i class="upload icon"></i>Dodaj obrazy
@@ -44,37 +44,31 @@
       </router-link>
     </div>
     <div class="pusher" :class="pusher" @click="hideSidebar">
-      <div class="full height">
-        <router-view></router-view>
-        <SettingsModal v-if="editSettingsMode" />
-        <ImageEditModal v-if="editImageMode" />
-        <ImageDeleteModal v-if="deleteImageMode" />         
+      <div class="App__main full height">
+        <router-view></router-view>        
       </div>
     </div>
+    <AppModals class="App__modals" />
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import router from './router';
-import SettingsModal from './components/SettingsModal.vue';
-import ImageEditModal from './components/ImageEditModal';
-import ImageDeleteModal from './components/ImageDeleteModal';
+import AppModals from './components/AppModals.vue';
 
 export default {
   name: 'App',
   router,
   components: {
-    ImageEditModal,
-    ImageDeleteModal,
-    SettingsModal,
+    AppModals,
   },
   computed: {
     ...mapGetters([
       'isAuthorized',
-      'editImageMode',
-      'deleteImageMode',
-      'editSettingsMode',
+      'imageEditMode',
+      'imageDeleteMode',
+      'settingsEditMode',
       'secondsLeft',
       'timeLeft',
       'sidebarVisible',
@@ -104,6 +98,13 @@ export default {
         dimmed: this.sidebarVisible,
       };
     },
+    dimmed() {
+      return {
+        dimmed: this.imageEditMode
+          || this.imageDeleteMode
+          || this.settingsEditMode,
+      };
+    },
   },
   methods: {
     ...mapActions([
@@ -120,6 +121,11 @@ export default {
 
 <style scoped lang="scss">
  .App {
+    $color-warning: lighten( orange, 10%);
+    position: relative;
+    &__main {
+      padding: 40px 0 0 0;
+    }
     &__timer {
       display: flex;
       align-items: baseline;
@@ -127,24 +133,30 @@ export default {
       cursor: pointer;
 
       &--blinking {
-        color: darken(red, 10%);
+        color: $color-warning;
         animation: pulse 1s infinite;
       }
 
       @keyframes pulse {
         0% {
-          background-color: rgba(darken(red, 10%), .7);
-          color: #fff;
+          box-shadow: inset 0 0 15px $color-warning;
+          background-color: inherit;
+          color: $color-warning;
         }
         50% {
-          background-color: #fff;
-          color: darken(red, 10%);
+          box-shadow: 0 0 10px $color-warning;
+          background-color: $color-warning;
+          color: #000;
         }
         100% {
-          background-color: rgba(darken(red, 10%), .7);
-          color: #fff;
+          box-shadow: inset 0 0 5px $color-warning;
+          background-color: inherit;
+          color: $color-warning;
         }
       }
+    }
+    &__modals {
+      position: absolute;
     }
  }
 </style>

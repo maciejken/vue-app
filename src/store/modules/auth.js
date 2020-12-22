@@ -31,31 +31,29 @@ const actions = {
   async login({ commit, dispatch, rootState }, auth) {
     try {
       const { apiUrl } = rootState.settings;
-      const { groups, sub } = await api.authenticate({ apiUrl, auth });
+      await api.authenticate({ apiUrl, auth });
       dispatch('authorize');
-      dispatch('updateUserId', parseInt(sub));
-      dispatch('updateUserGroups', groups);
       router.push('/');
     } catch (err) {
       if (err.message) {
-        commit('SET_AUTH_ERROR', new Error('Odmowa dostępu'));
+        commit('setAuthError', new Error('Odmowa dostępu'));
       } else {
-        commit('SET_AUTH_ERROR', new Error('Nieznany błąd'));
+        commit('setAuthError', new Error('Nieznany błąd'));
       }
     }
   },
   logout({ commit, dispatch, state }) {
     cookie.clearAuth();
     clearInterval(state.timer);
-    commit('SET_AUTH_SECONDS', null);
-    commit('SET_AUTH_TIMER', null);
+    commit('setAuthSeconds', null);
+    commit('setAuthTimer', null);
     dispatch('updateUserId', null);
-    dispatch('updateUserGroups', []);
     dispatch('hideSidebar');
+    dispatch('hideModals');
     router.push('/login');
   },
   clearAccessError({ commit }) {
-    commit('SET_AUTH_ERROR', null);
+    commit('setAuthError', null);
   },
   authorize({ commit, dispatch, state }) {
     if (state.timer) {
@@ -63,24 +61,25 @@ const actions = {
     }
     const expires = cookie.getAuthExpiration();
     if (expires) {
-      commit('SET_AUTH_EXPIRES', expires);
+      commit('setAuthExpires', expires);
       let seconds = parseInt((state.expires - Date.now())/1000);
-      commit('SET_AUTH_SECONDS', seconds);
+      commit('setAuthSeconds', seconds);
       const timer = setInterval(() => {
         seconds = parseInt((state.expires - Date.now())/1000);
         if (seconds <= 0) {
           clearInterval(state.timer);
           dispatch('logout');
         } else {
-          commit('SET_AUTH_SECONDS', seconds);
+          commit('setAuthSeconds', seconds);
         }
         return seconds;
       }, 1000);
-      commit('SET_AUTH_TIMER', timer);      
+      commit('setAuthTimer', timer);
+      dispatch('updateUserData');
     } else {
-      commit('SET_AUTH_EXPIRES', null);
-      commit('SET_AUTH_SECONDS', null);
-      commit('SET_AUTH_TIMER', null);
+      commit('setAuthExpires', null);
+      commit('setAuthSeconds', null);
+      commit('setAuthTimer', null);
     }
     return expires;
   },
@@ -91,25 +90,25 @@ const actions = {
       dispatch('authorize'); 
     } catch (err) {
       if (err.message) {
-        commit('SET_AUTH_ERROR', new Error('Odmowa dostępu'));
+        commit('setAuthError', new Error('Odmowa dostępu'));
       } else {
-        commit('SET_AUTH_ERROR', new Error('Nieznany błąd'));
+        commit('setAuthError', new Error('Nieznany błąd'));
       }
     }
   },
 };
 
 const mutations = {
-  SET_AUTH_ERROR(state, error) {
+  setAuthError(state, error) {
     state.error = error;
   },
-  SET_AUTH_EXPIRES(state, expires) {
+  setAuthExpires(state, expires) {
     state.expires = expires;
   },
-  SET_AUTH_TIMER(state, timer) {
+  setAuthTimer(state, timer) {
     state.timer = timer;
   },
-  SET_AUTH_SECONDS(state, seconds) {
+  setAuthSeconds(state, seconds) {
     state.seconds = seconds;
   },
 };

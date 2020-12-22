@@ -1,25 +1,25 @@
 <template>
-  <modal @close="disableImageDeleteMode">
+  <modal :active="imageDeleteMode" size="tiny">
     <template v-slot:header>
-      <div  class="ImageDeleteModal__header">
+      <div class="header">
         Potwierdź usunięcie pliku
       </div>
     </template>
     <template v-slot:body>
-      <div class="ImageDeleteModal__body">
+      <div class="content">
         Czy na pewno usunąć plik {{ selectedImage.filename }}?
       </div>
     </template>
     <template v-slot:footer>
-      <div class="ImageDeleteModal__footer">
-        <button class="ImageDeleteModal__confirm"
+      <div class="actions">
+        <div class="ui approve button"
           @click="deleteImage(selectedImage.filename)">
           Tak
-        </button>
-        <button class="ImageDeleteModal__cancel"
+        </div>
+        <div class="ui cancel button"
           @click="disableImageDeleteMode">
           Nie
-        </button>
+        </div>        
       </div>
     </template>
   </modal>
@@ -35,7 +35,7 @@ export default {
     Modal,
   },
   computed: {
-    ...mapGetters(['selectedImage']),
+    ...mapGetters(['imageDeleteMode', 'selectedImage']),
   },
   methods: {
     ...mapActions(['deleteImage', 'disableImageDeleteMode']),

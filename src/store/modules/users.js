@@ -1,13 +1,13 @@
 import api from '../../api/users';
 import router from '../../router';
+import cookie from '../../utils/cookie';
 
 export const state = {
   error: null,
   userId: null,
   groupId: null,
+  userGroupIds: [],
   userGroups: [],
-  users: [],
-  groups: [],
 };
 
 export const actions = {
@@ -15,34 +15,62 @@ export const actions = {
     try {
       const { apiUrl } = rootState.settings;
       await api.createUser({ apiUrl, user });
-      commit('SET_USER_ERROR', null);
+      commit('setUserError', null);
       router.push('/login');
     } catch (err) {
-      commit('SET_USER_ERROR', err);
+      commit('setUserError', err);
     }
   },
   updateUserId({ commit }, userId) {
-    commit('SET_USER_ID', userId);
+    commit('setUserId', userId);
   },
-  updateUserGroups({ commit }, groups) {
-    commit('SET_USER_GROUPS', groups);
+  selectGroupId({ commit }, groupId) {
+    commit('setSelectedGroupId', groupId);
+  },
+  updateUserData({ commit }) {
+    const { userId, groups } = cookie.getUserData();
+    if (userId && groups) {
+      commit('setUserId', userId);
+      commit('setUserGroupIds', groups)
+      if (groups.length === 1) {
+        commit('setGroupId', groups[0]);
+      }
+    }
+  },
+  async fetchUserGroups({ commit, rootState }) {
+    const { apiUrl } = rootState.settings;
+    const { userId } = rootState.users;
+    try {
+      const groups = await api.getUserGroups({ apiUrl, userId });
+      commit('setUserGroups', groups);
+    } catch (err) {
+      commit('setUserError', err);
+    }
   },
 };
 
 export const mutations = {
-  SET_USER_ERROR(state, error) {
+  setUserError(state, error) {
     state.error = error;
   },
-  SET_USER_ID(state, userId) {
+  setUserId(state, userId) {
     state.userId = userId;
   },
-  SET_USER_GROUPS(state, groups) {
+  setGroupId(state, groupId) {
+    state.groupId = groupId;
+  },
+  setUserGroupIds(state, ids) {
+    state.userGroupIds = ids;
+  },
+  setUserGroups(state, groups) {
     state.userGroups = groups;
   },
 };
 
 export const getters = {
+  userGroupIds: ({ userGroupIds }) => userGroupIds,
   userGroups: ({ userGroups }) => userGroups,
+  selectedGroupId: ({ groupId }) => groupId,
   userId: ({ userId }) => userId,
 };
 

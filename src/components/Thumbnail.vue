@@ -37,9 +37,9 @@ export default {
     data: Object,
   },
   computed: {
-    ...mapGetters(['checkedImages', 'pathToUploads', 'userGroups', 'userId']),
+    ...mapGetters(['checkedImages', 'pathToUploads', 'userGroupIds', 'userId']),
     canEdit() {
-      return this.userGroups.includes(this.data.groupId);
+      return this.userGroupIds.includes(this.data.groupId);
     },
     canDelete() {
       return this.userId === this.data.userId;

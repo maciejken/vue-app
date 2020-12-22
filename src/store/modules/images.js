@@ -9,16 +9,9 @@ const state = {
     userId: null,
     groupId: null,
     caption: null,
-    location: null,
-    datetime: null,
     description: null,
-    camera: null,
-    width: null,
-    height: null,
-    size: null,
-    createdAt: null,
-    updatedAt: null,
   },
+  selectedImageDetails: [],
   imagesChecked: [],
   error: null,
   editMode: false,
@@ -29,16 +22,11 @@ const getters = {
   uploadedImages: ({ images }) => images,
   currentPage: ({ page }) => page,
   selectedImage: ({ selectedImage }) => selectedImage,
-  selectedImageCaptureDate: ({ selectedImage }) => new Date(selectedImage.datetime).toLocaleString('pl'),
-  selectedImageDimensions: ({ selectedImage }) => {
-    const { width, height } = selectedImage;
-    return `${width} x ${height}`;
-  },
-  selectedImageMegabytes: ({ selectedImage }) => Math.round(10 * selectedImage.size/(1024 * 1024))/10,
+  selectedImageDetails: ({ selectedImageDetails }) => selectedImageDetails,
   checkedImages: ({ imagesChecked }) => imagesChecked,
   imagesError: ({ error }) => error,
-  editImageMode: ({ editMode }) => editMode,
-  deleteImageMode: ({ deleteMode }) => deleteMode,
+  imageEditMode: ({ editMode }) => editMode,
+  imageDeleteMode: ({ deleteMode }) => deleteMode,
 };
 
 const actions = {
@@ -68,7 +56,7 @@ const actions = {
   async uploadImages({ commit, rootState }, formData) {
     try {
       const { apiUrl } = rootState.settings;
-      const groupId = rootState.users.userGroups[0];
+      const { groupId } = rootState.users;
       await api.uploadImages({ apiUrl, formData, groupId });
       commit('setError', null);
       router.push('/uploads');
@@ -85,7 +73,7 @@ const actions = {
     } catch (err) {
       commit('setError', err);
     } finally {
-      commit('SET_IMAGE_DELETE_MODE', false);
+      commit('setImageDeleteMode', false);
     }
   },
   toggleImageChecked({ commit, state }, filename) {
@@ -97,13 +85,16 @@ const actions = {
       checked = state.imagesChecked.slice(index - 1, index)
         .concat(state.imagesChecked.slice(index + 1));
     }
-    commit('SET_IMAGES_CHECKED', checked);
+    commit('setImagesChecked', checked);
   },
   async fetchImage({ commit, rootState }, filename) {
     try {
       const { apiUrl } = rootState.settings;
       const image = await api.fetchImage({ apiUrl, filename });
+      const details = image.details.slice();
+      delete image.details;
       commit('setSelectedImage', image);
+      commit('setSelectedImageDetails', details);
     } catch (err) {
       commit('setError', err);
     }
@@ -122,22 +113,22 @@ const actions = {
       } else {
         throw new Error('image has no filename');
       }
-      commit('SET_IMAGE_EDIT_MODE', false);
+      commit('setImageEditMode', false);
     } catch (err) {
       commit('setError', err);
     }
   },
   enableImageEditMode({ commit }) {
-    commit('SET_IMAGE_EDIT_MODE', true);
+    commit('setImageEditMode', true);
   },
   disableImageEditMode({ commit }) {
-    commit('SET_IMAGE_EDIT_MODE', false);
+    commit('setImageEditMode', false);
   },
   enableImageDeleteMode({ commit }) {
-    commit('SET_IMAGE_DELETE_MODE', true);
+    commit('setImageDeleteMode', true);
   },
   disableImageDeleteMode({ commit }) {
-    commit('SET_IMAGE_DELETE_MODE', false);
+    commit('setImageDeleteMode', false);
   },
   updateSelectedImage({ commit }, image) {
     commit('setSelectedImage', image);
@@ -160,13 +151,16 @@ const mutations = {
   setSelectedImage(state, image) {
     state.selectedImage = image;
   },
-  SET_IMAGES_CHECKED(state, filenames) {
+  setSelectedImageDetails(state, details) {
+    state.selectedImageDetails = details;
+  },
+  setImagesChecked(state, filenames) {
     state.imagesChecked = filenames;
   },
-  SET_IMAGE_EDIT_MODE(state, enabled) {
+  setImageEditMode(state, enabled) {
     state.editMode = enabled;
   },
-  SET_IMAGE_DELETE_MODE(state, enabled) {
+  setImageDeleteMode(state, enabled) {
     state.deleteMode = enabled;
   },
   setSelectedImageLocationDateTime(state, dateTime) {
