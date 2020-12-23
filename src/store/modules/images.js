@@ -16,6 +16,7 @@ const state = {
   error: null,
   editMode: false,
   deleteMode: false,
+  isPublicUpload: false,
 };
 
 const getters = {
@@ -27,6 +28,7 @@ const getters = {
   imagesError: ({ error }) => error,
   imageEditMode: ({ editMode }) => editMode,
   imageDeleteMode: ({ deleteMode }) => deleteMode,
+  isPublicUpload: ({ isPublicUpload }) => isPublicUpload,
 };
 
 const actions = {
@@ -57,7 +59,8 @@ const actions = {
     try {
       const { apiUrl } = rootState.settings;
       const { groupId } = rootState.users;
-      await api.uploadImages({ apiUrl, formData, groupId });
+      const { isPublicUpload } = rootState.images;
+      await api.uploadImages({ apiUrl, formData, groupId, isPublicUpload });
       commit('setError', null);
       router.push('/uploads');
     } catch (err) {
@@ -133,8 +136,8 @@ const actions = {
   updateSelectedImage({ commit }, image) {
     commit('setSelectedImage', image);
   },
-  updateImageLocationDateTime({ commit }, evt) {
-    commit('setSelectedImageLocationDateTime', evt.target.value);
+  updatePublicUpload({ commit }, isPublic) {
+    commit('setPublicUpload', isPublic);
   },
 };
 
@@ -163,8 +166,8 @@ const mutations = {
   setImageDeleteMode(state, enabled) {
     state.deleteMode = enabled;
   },
-  setSelectedImageLocationDateTime(state, dateTime) {
-    state.selectedImage.locationDateTime = dateTime;
+  setPublicUpload(state, isPublic) {
+    state.isPublicUpload = isPublic;
   },
 };
 

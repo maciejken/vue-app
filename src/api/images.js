@@ -5,8 +5,15 @@ export default {
   async fetchImages({ apiUrl, query }) {
     return http.get(`${apiUrl}/images?${qs.stringify(query)}`);
   },
-  async uploadImages({ apiUrl, formData, groupId }) {
-    return http.post(`${apiUrl}/uploads?groupId=${groupId}`, {
+  async uploadImages({ apiUrl, formData, groupId, isPublicUpload }) {
+    let url;
+    if (isPublicUpload) {
+      url = `${apiUrl}/uploads/public`;
+    } else {
+      const query = { groupId };
+      url = `${apiUrl}/uploads?${qs.stringify(query)}`
+    } 
+    return http.post(url, {
       body: formData
     });
   },

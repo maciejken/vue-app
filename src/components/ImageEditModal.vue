@@ -73,7 +73,6 @@ export default {
       'disableImageEditMode',
       'patchImage',
       'updateSelectedImage',
-      'updateImageLocationDateTime',
     ]),
     async updateImage({ target }) {
       const { name, selectionEnd, value } = target;

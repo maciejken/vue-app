@@ -122,7 +122,6 @@ export default {
 <style scoped lang="scss">
  .App {
     $color-warning: lighten( orange, 10%);
-    position: relative;
     &__main {
       padding: 40px 0 0 0;
     }
@@ -154,9 +153,6 @@ export default {
           color: $color-warning;
         }
       }
-    }
-    &__modals {
-      position: absolute;
     }
  }
 </style>

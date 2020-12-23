@@ -4,12 +4,22 @@
       @submit.prevent="submitFiles"
     >
       <div class="UploadForm__input">
-        <input class="box__file" type="file" name="imageUpload" id="files"
-          data-multiple-caption="{count} files selected" multiple
+        <input class="UploadForm__files" type="file" name="imageUpload" id="files"
+          data-multiple-caption="Wybrano plików: {count}" multiple
           ref="filesInput" @change="handleFileUploads"
         />
         <label for="file"><span class="box__dragndrop">Drag and drop files here</span></label>
-        <button class="box__button" type="submit" :disabled="!selectedGroupId">Wyślij</button>
+        <button class="UploadForm__submit" type="submit"
+          :disabled="!(selectedGroupId || isPublicUpload)"
+        >
+          Wyślij
+        </button>
+        <label class="UploadForm__public">
+          <input type="checkbox"
+            class="UploadForm__checkbox"
+            v-model="isPublic"
+          >Zapisz w katalogu publicznym
+        </label>
       </div>
       <div class="box__uploading">Uploading…</div>
       <div class="box__success">Done!</div>
@@ -28,10 +38,18 @@ export default {
     files: '',
   }),
   computed: {
-    ...mapGetters(['selectedGroupId', 'userGroups']),
+    ...mapGetters(['isPublicUpload', 'selectedGroupId', 'userGroups']),
+    isPublic: {
+      get() {
+        return this.isPublicUpload;
+      },
+      set(isPublic) {
+        this.updatePublicUpload(isPublic);
+      },
+    },
   },
   methods: {
-    ...mapActions(['fetchUserGroups', 'uploadImages']),
+    ...mapActions(['fetchUserGroups', 'updatePublicUpload', 'uploadImages']),
     handleFileUploads() {
       this.files = this.$refs.filesInput.files;
     },
@@ -59,9 +77,17 @@ export default {
     &__input {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      width: 200px;
-      height: 200px;
+      width: 16em;
+    }
+    &__files, &__submit {
+      margin: 0 0 1em 0;
+    }
+    &__public {
+      display: flex;
+      align-items: center;
+    }
+    &__checkbox {
+      margin: 0 0.5em 0 0;
     }
   }
 .box__dragndrop,
