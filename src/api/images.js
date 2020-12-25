@@ -24,7 +24,7 @@ export default {
     return http.get(`${apiUrl}/images/${filename}`);
   },
   async patchImage({ apiUrl, image }) {
-    return http.patch(`${apiUrl}/images/${image.filename}`, {
+    return http.patch(`${apiUrl}/groups/${image.groupId}/images/${image.filename}`, {
       body: JSON.stringify(image),
       headers: {
         'Content-Type': 'application/json'
