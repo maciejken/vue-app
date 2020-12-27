@@ -70,7 +70,8 @@ const actions = {
   async deleteImage({ commit, dispatch, rootState }, filename) {
     try {
       const { apiUrl } = rootState.settings;
-      await api.deleteImage({ apiUrl, filename });
+      const { userId } = rootState.users;
+      await api.deleteImage({ apiUrl, userId, filename });
       commit('setError', null);
       dispatch('fetchImages');
     } catch (err) {
@@ -93,7 +94,8 @@ const actions = {
   async fetchImage({ commit, rootState }, filename) {
     try {
       const { apiUrl } = rootState.settings;
-      const image = await api.fetchImage({ apiUrl, filename });
+      const { groupId } = rootState.users;
+      const image = await api.fetchImage({ apiUrl, groupId, filename });
       const details = image.details.slice();
       delete image.details;
       commit('setSelectedImage', image);
@@ -105,8 +107,11 @@ const actions = {
   async patchImage({ commit, dispatch, rootState }) {
     try {
       const { apiUrl } = rootState.settings;
+      const { userId } = rootState.users;
       const { selectedImage } = rootState.images;
-      if (selectedImage.filename) {
+      if (!selectedImage.filename) {
+        throw new Error('image has no filename');
+      } else if (selectedImage.userId === userId) {
         const updatedImage = await api.patchImage({
           apiUrl,
           image: selectedImage,
@@ -114,7 +119,7 @@ const actions = {
         commit('setSelectedImage', updatedImage);
         dispatch('fetchImages');
       } else {
-        throw new Error('image has no filename');
+        throw new Error(`user ${userId} cannot edit ${selectedImage.filename} image data`);
       }
       commit('setImageEditMode', false);
     } catch (err) {

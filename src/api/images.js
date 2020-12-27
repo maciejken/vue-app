@@ -10,21 +10,21 @@ export default {
     if (isPublicUpload) {
       url = `${apiUrl}/uploads/public`;
     } else {
-      const query = { groupId };
-      url = `${apiUrl}/uploads?${qs.stringify(query)}`
+      url = `${apiUrl}/groups/${groupId}/uploads`
     } 
     return http.post(url, {
       body: formData
     });
   },
-  async deleteImage({ apiUrl, filename }) {
-    return http.delete(`${apiUrl}/uploads/${filename}`);
+  async deleteImage({ apiUrl, userId, filename }) {
+    return http.delete(`${apiUrl}/users/${userId}/uploads/${filename}`);
   },
-  async fetchImage({ apiUrl, filename }) {
-    return http.get(`${apiUrl}/images/${filename}`);
+  async fetchImage({ apiUrl, groupId, filename }) {
+    return http.get(`${apiUrl}/groups/${groupId}/images/${filename}`);
   },
   async patchImage({ apiUrl, image }) {
-    return http.patch(`${apiUrl}/groups/${image.groupId}/images/${image.filename}`, {
+    const { userId, filename } = image;
+    return http.patch(`${apiUrl}/users/${userId}/images/${filename}`, {
       body: JSON.stringify(image),
       headers: {
         'Content-Type': 'application/json'
