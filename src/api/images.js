@@ -16,8 +16,17 @@ export default {
       body: formData
     });
   },
-  async deleteImage({ apiUrl, userId, filename }) {
-    return http.delete(`${apiUrl}/users/${userId}/uploads/${filename}`);
+  async deleteImages({ apiUrl, userId, filename }) {
+    let url;
+    const opts = {};
+    if (Array.isArray(filename)) {
+      url = `${apiUrl}/users/${userId}/uploads`;
+      opts.body = JSON.stringify({ filename });
+      opts.headers = { 'Content-Type': 'application/json' };
+    } else {
+      url = `${apiUrl}/users/${userId}/uploads/${filename}`;
+    }
+    return http.delete(url, opts);
   },
   async fetchImage({ apiUrl, groupId, filename }) {
     return http.get(`${apiUrl}/groups/${groupId}/images/${filename}`);

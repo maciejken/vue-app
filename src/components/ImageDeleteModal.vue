@@ -2,18 +2,26 @@
   <modal :active="imageDeleteMode" size="tiny">
     <template v-slot:header>
       <div class="header">
-        Potwierdź usunięcie pliku
+        Potwierdź usunięcie plików
       </div>
     </template>
     <template v-slot:body>
       <div class="content">
-        Czy na pewno usunąć plik {{ selectedImage.filename }}?
+        Czy na pewno usunąć następujące pliki?
+        <ol class="ImageDeleteModal__files-list">
+        <li v-for="filename in imagesChecked"
+          :key="`file-${filename}`"
+          class="ImageDeleteModal__filename">
+          {{filename}}
+        </li>
+      </ol>
       </div>
+
     </template>
     <template v-slot:footer>
       <div class="actions">
         <div class="ui approve button"
-          @click="deleteImage(selectedImage.filename)">
+          @click="deleteImages">
           Tak
         </div>
         <div class="ui cancel button"
@@ -35,10 +43,10 @@ export default {
     Modal,
   },
   computed: {
-    ...mapGetters(['imageDeleteMode', 'selectedImage']),
+    ...mapGetters(['imageDeleteMode', 'imagesChecked']),
   },
   methods: {
-    ...mapActions(['deleteImage', 'disableImageDeleteMode']),
+    ...mapActions(['deleteImages', 'disableImageDeleteMode']),
   },
 }
 </script>

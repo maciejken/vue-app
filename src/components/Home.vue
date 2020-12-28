@@ -11,12 +11,18 @@
         :to="`/uploads/${img.filename}`"
       >
         <Thumbnail
+          v-if="img.filename"
           :data="img"
-          @click.native="updateSelectedImage(img)"
           @editImage="editImage"
-          @deleteImage="deleteImage"
+          @deleteImage="deleteImages"
         />        
       </router-link>
+    </div>
+    <div v-if="showBulkActions" class="Home__actions actions">
+      <div class="ui approve button"
+        @click="deleteImages">
+        Usuń zaznaczone
+      </div>
     </div>
   </div>
 </template>
@@ -33,9 +39,13 @@ export default {
   computed: {
     ...mapGetters([
       'uploadedImages',
+      'imagesChecked',
       'imagesError',
       'isAuthorized',
     ]),
+    showBulkActions() {
+      return this.imagesChecked.length > 1;
+    },
   },
   methods: {
     ...mapActions([
@@ -44,20 +54,17 @@ export default {
       'previousPage',
       'authorize',
       'logout',
-      'updateSelectedImage',
       'enableImageEditMode',
       'enableImageDeleteMode',
     ]),
-    editImage(image) {
-      this.updateSelectedImage(image);
+    editImage() {
       this.enableImageEditMode();
     },
-    deleteImage(image) {
-      this.updateSelectedImage(image);
+    deleteImages() {
       this.enableImageDeleteMode();
     },
   },
-  created() {
+  beforeMount() {
     this.fetchImages();
   },
 };
@@ -85,6 +92,9 @@ export default {
       justify-content: flex-start;
       align-items: center;
       flex-wrap: wrap;
+    }
+    &__actions {
+      margin: 1em 0 0 1em;
     }
   }
 </style>

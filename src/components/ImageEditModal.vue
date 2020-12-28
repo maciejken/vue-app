@@ -2,12 +2,12 @@
   <div class="ImageEditModal">
     <modal :active="imageEditMode">
       <template v-slot:header>
-        <div class="header">{{selectedImage.filename}}</div>
+        <div class="header">{{filename}}</div>
       </template>
       <template v-slot:body>
         <div class="image content ImageEditModal__body">
           <img class="image"
-            :src="`${pathToUploads}/${selectedImage.filename}/thumbnail`"
+            :src="`${pathToUploads}/${filename}/thumbnail`"
             alt=""
           >
           <div class="ImageEditModal__description">
@@ -63,7 +63,11 @@ export default {
       'selectedKeyMap',
       'userGroupIds',
       'imageEditMode',
+      'imagesChecked',
     ]),
+    filename() {
+      return this.selectedImage.filename;
+    },
     canEdit() {
       return this.userGroupIds.includes(this.selectedImage.groupId);
     },
@@ -72,13 +76,13 @@ export default {
     ...mapActions([
       'disableImageEditMode',
       'patchImage',
-      'updateSelectedImage',
+      'selectImage',
     ]),
     async updateImage({ target }) {
       const { name, selectionEnd, value } = target;
       const currentValue = this.selectedImage[name] || '';
       const keyMap = this.selectedKeyMap;
-      await this.updateSelectedImage({
+      await this.selectImage({
         ...this.selectedImage,
         [name]: mapInput({ currentValue, value, keyMap })
       });

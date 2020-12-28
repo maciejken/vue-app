@@ -24,7 +24,7 @@ const getters = {
   currentPage: ({ page }) => page,
   selectedImage: ({ selectedImage }) => selectedImage,
   selectedImageDetails: ({ selectedImageDetails }) => selectedImageDetails,
-  checkedImages: ({ imagesChecked }) => imagesChecked,
+  imagesChecked: ({ imagesChecked }) => imagesChecked,
   imagesError: ({ error }) => error,
   imageEditMode: ({ editMode }) => editMode,
   imageDeleteMode: ({ deleteMode }) => deleteMode,
@@ -67,12 +67,15 @@ const actions = {
       commit('setError', err);
     }
   },
-  async deleteImage({ commit, dispatch, rootState }, filename) {
+  async deleteImages({ commit, dispatch, rootState }) {
     try {
       const { apiUrl } = rootState.settings;
       const { userId } = rootState.users;
-      await api.deleteImage({ apiUrl, userId, filename });
+      const { imagesChecked } = rootState.images;
+      const filename = imagesChecked.length === 1 ? imagesChecked[0] : imagesChecked;
+      await api.deleteImages({ apiUrl, userId, filename });
       commit('setError', null);
+      commit('setImagesChecked', []);
       dispatch('fetchImages');
     } catch (err) {
       commit('setError', err);
@@ -90,6 +93,9 @@ const actions = {
         .concat(state.imagesChecked.slice(index + 1));
     }
     commit('setImagesChecked', checked);
+  },
+  checkImages({ commit }, filenames) {
+    commit('setImagesChecked', filenames);
   },
   async fetchImage({ commit, rootState }, filename) {
     try {
@@ -138,7 +144,7 @@ const actions = {
   disableImageDeleteMode({ commit }) {
     commit('setImageDeleteMode', false);
   },
-  updateSelectedImage({ commit }, image) {
+  selectImage({ commit }, image) {
     commit('setSelectedImage', image);
   },
   updatePublicUpload({ commit }, isPublic) {

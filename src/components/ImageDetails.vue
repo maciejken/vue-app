@@ -15,16 +15,19 @@
         {{selectedImage.caption}}
       </caption>
       <div class="ImageDetails__info">
-        <div class="ImageDetails__info-item">
+        <div class="ImageDetails__detail">
+          <i class="image icon"></i> Rozmiar pliku: {{imageFileSize}} MB
+        </div>
+        <div v-if="imageWidth" class="ImageDetails__detail">
+          <i class="image icon"></i> Rozdzielczość: {{imageWidth}} x {{imageHeight}}
+        </div>
+        <div v-if="imageCamera" class="ImageDetails__detail">
           <i class="camera icon"></i> {{imageCamera}}
         </div>
-        <div class="ImageDetails__info-item">
-          <i class="calendar icon"></i> {{imageDatetime}}
+        <div v-if="imageCreatedAt" class="ImageDetails__detail">
+          <i class="calendar icon"></i> {{imageCreatedAt}}
         </div>
-        <div class="ImageDetails__info-item">
-          <i class="image icon"></i> {{imageWidth}} x {{imageHeight}} ({{imageFileSize}} MB)
-        </div>
-        <div class="ImageDetails__info-item">
+        <div v-if="imageLocation" class="ImageDetails__detail">
           <i class="map marker alternate icon"></i> {{imageLocation}}
         </div>
       </div>
@@ -62,9 +65,9 @@ export default {
         'ImageDetails__fig--landscape': this.imageWidth > this.imageHeight,
       };
     },
-    imageDatetime() {
-      const datetime = this.getImageDetail(ImageDetail.datetime);
-      return new Date(datetime).toLocaleString('pl');
+    imageCreatedAt() {
+      const { createdAt } = this.selectedImage;
+      return createdAt && new Date(createdAt).toLocaleString('pl');
     },
     imageLocation() {
       return this.getImageDetail(ImageDetail.location);
@@ -136,10 +139,9 @@ export default {
       bottom: 0;
       font-size: 18px;
       flex-wrap: wrap;
-      justify-content: space-around;
+      justify-content: flex-start;
     }
-    &__info-item {
-      width: 300px;
+    &__detail {
       display: flex;
       padding: 0 0 0 36px;
     }

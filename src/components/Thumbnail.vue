@@ -1,8 +1,8 @@
 <template>
   <div class="Thumbnail" @mouseenter="active = true" @mouseleave="active = false">
-    <img class="Thumbnail__img"
-      :src="`${pathToUploads}/${data.filename}/thumbnail`"
-      alt=""
+    <img v-if="thumbnail" class="Thumbnail__img"
+      :src="thumbnail"
+      :alt="data.caption"
     />
     <div v-if="active || check" class="Thumbnail__checkbox">
       <i v-if="canEdit"
@@ -13,11 +13,11 @@
     </div>
     <div v-if="active" class="Thumbnail__toolbar">
       <span class="Thumbnail__filename">{{data.filename | truncate(maxFilenameLength)}}</span>
-      <div class="Thumbnail__actions">
-        <i v-if="canEdit" class="Thumbnail__action edit icon"
+      <div v-if="canEdit" class="Thumbnail__actions">
+        <i class="Thumbnail__action edit icon"
           @click.prevent="editImage"
         ></i>
-        <i v-if="canDelete" class="Thumbnail__action trash alternate icon"
+        <i class="Thumbnail__action trash alternate icon"
           @click.prevent="deleteImage"
         ></i>        
       </div>
@@ -37,35 +37,35 @@ export default {
     data: Object,
   },
   computed: {
-    ...mapGetters(['checkedImages', 'pathToUploads', 'userGroupIds', 'userId']),
+    ...mapGetters(['imagesChecked', 'pathToUploads', 'userId']),
     canEdit() {
-      return this.userGroupIds.includes(this.data.groupId);
-    },
-    canDelete() {
       return this.userId === this.data.userId;
     },
     check() {
-      return this.checkedImages.includes(this.data.filename);
+      return this.imagesChecked.includes(this.data.filename);
     },
     maxFilenameLength() {
       let maxLength;
-      if (this.canEdit && this.canDelete) {
-        maxLength = 15;
-      } else if (this.canEdit || this.canDelete) {
-        maxLength = 20;
+      if (this.canEdit) {
+        maxLength = 16;
       } else {
         maxLength = 25;
       }
       return maxLength;
-    }
+    },
+    thumbnail() {
+      return this.data.filename ? `${this.pathToUploads}/${this.data.filename}/thumbnail` : null;
+    },
   },
   methods: {
-    ...mapActions(['toggleImageChecked']),
+    ...mapActions(['checkImages', 'selectImage', 'toggleImageChecked']),
     editImage() {
+      this.selectImage(this.data);
       this.$emit('editImage', this.data);
     },
     deleteImage() {
-      this.$emit('deleteImage', this.data);
+      this.checkImages([this.data.filename]);
+      this.$emit('deleteImage');
     },
   },
   filters: {
