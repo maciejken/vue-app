@@ -79,8 +79,8 @@ export default {
 
 <style lang="scss" scoped>
   .Thumbnail {
-    width: 200px;
-    height: 200px;
+    width: 14em;
+    height: 14em;
     margin: 2px;
     cursor: pointer;
     color: #000;
