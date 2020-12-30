@@ -112,13 +112,16 @@ export default {
   }
 
   @media only screen and (max-width: 640px) {
-    .ImageDetailsEditor {
+    .ImageEditModal {
       &__content {
         flex-direction: column;
         align-items: center;
       }
       &__filename {
         text-align: center;
+      }
+      &__description {
+        padding: 0;
       }
     }
   }
