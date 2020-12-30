@@ -10,7 +10,7 @@
         />
         <label for="file"><span class="box__dragndrop">Drag and drop files here</span></label>
         <button class="UploadForm__submit" type="submit"
-          :disabled="!(selectedGroupId || isPublicUpload)"
+          :disabled="!okToUpload"
         >
           Wyślij
         </button>
@@ -46,6 +46,10 @@ export default {
       set(isPublic) {
         this.updatePublicUpload(isPublic);
       },
+    },
+    okToUpload() {
+      // TODO: check if user is admin for public uploads
+      return this.selectedGroupId || this.isPublicUpload;
     },
   },
   methods: {

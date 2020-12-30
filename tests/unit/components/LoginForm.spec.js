@@ -15,13 +15,13 @@ describe('LoginForm', () => {
   beforeEach(() => {
     actions = {
       login: jest.fn(),
-      updateEmail: jest.fn(),
+      updateUsername: jest.fn(),
       updatePassword: jest.fn()
     };
     getters = {
-      email: jest.fn(),
+      username: jest.fn(),
       password: jest.fn(),
-      isEmailValid: jest.fn(),
+      isUsernameValid: jest.fn(),
       isAccessDenied: jest.fn()
     };
     store = new Vuex.Store({

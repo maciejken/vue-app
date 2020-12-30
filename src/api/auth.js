@@ -6,7 +6,7 @@ export default {
     if (auth) {
       opts = {
         headers: {
-          Authorization: `Basic ${btoa(`${auth.email}:${auth.password}`)}`
+          Authorization: `Basic ${btoa(`${auth.username}:${auth.password}`)}`
         },        
       };
     }

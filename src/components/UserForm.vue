@@ -6,11 +6,11 @@
           <div class="field">
             <div class="ui left icon input">
               <i class="user icon"></i>
-              <input type="email"
-                v-model="email"
-                placeholder="Adres e-mail"
+              <input type="text"
+                v-model="username"
+                placeholder="Nazwa użytkownika"
                 @keydown="handleKeyDown"
-                ref="emailInput"
+                ref="usernameInput"
               />
             </div>
           </div>
@@ -55,7 +55,7 @@ import { mapActions, mapGetters } from 'vuex';
 export default {
   name: "UserForm",
   data: () => ({
-    email: null,
+    username: null,
     password: null,
     repeatPassword: null,
   }),
@@ -64,19 +64,19 @@ export default {
   },
   computed: {
     ...mapGetters(['accessError']),
-    isEmailValid() {
-      const EmailRegex = /^[a-zA-Z0-9_.+-]{3,20}@[a-zA-Z0-9-]{3,10}\.[a-zA-Z0-9-.]{2,10}$/;
-      return EmailRegex.test(this.email);
+    isUsernameValid() {
+      const UsernameRegex = /^[a-z0-9]{3,24}$/;
+      return UsernameRegex.test(this.username);
     },
     isPasswordValid() {
-      const PasswordRegex = /^[A-Za-z0-9]{8,24}$/;
+      const PasswordRegex = /^[A-Za-z0-9.,;:!?@#$%^&*]{8,24}$/;
       return PasswordRegex.test(this.password);
     },
     isRepeatPasswordValid() {
       return !this.signUp || this.repeatPassword === this.password;
     },
     isFormValid() {
-      return this.isEmailValid && this.isPasswordValid && this.isRepeatPasswordValid;
+      return this.isUsernameValid && this.isPasswordValid && this.isRepeatPasswordValid;
     },
   },
   methods: {
@@ -91,16 +91,16 @@ export default {
       }
     },
     handleSubmit() {
-      const { email, password } = this;
+      const { username, password } = this;
       if (this.signUp) {
-        this.isFormValid && !this.accessError && this.createUser({ email, password });
+        this.isFormValid && !this.accessError && this.createUser({ username, password });
       } else {
-        this.isFormValid && !this.accessError && this.login({ email, password });
+        this.isFormValid && !this.accessError && this.login({ username, password });
       }
     },
   },
   mounted() {
-    this.$refs.emailInput.focus();
+    this.$refs.usernameInput.focus();
   },
   destroyed() {
     this.clearAccessError();
