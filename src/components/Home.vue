@@ -1,9 +1,5 @@
 <template>
   <div class="Home">
-    <div class="Home__navigation">
-      <i class="Home__previous chevron circle left icon" @click="previousPage"></i>
-      <i class="Home__next chevron circle right icon" @click="nextPage"></i>
-    </div>
     <div class="Home__images">
       <router-link
         v-for="img of uploadedImages"
@@ -50,8 +46,6 @@ export default {
   methods: {
     ...mapActions([
       'fetchImages',
-      'nextPage',
-      'previousPage',
       'authorize',
       'logout',
       'enableImageEditMode',
@@ -72,21 +66,6 @@ export default {
 
 <style scoped lang="scss">
   .Home {
-    &__navigation {
-      display: flex;
-      justify-content: center;
-      margin: 15px;
-      font-size: 24px;
-    }
-    &__previous, &__next {
-      cursor: pointer;
-    }
-    &__previous {
-      margin-right: 12px;
-    }
-    &__next {
-      margin-left: 12px;
-    }
     &__images {
       display: flex;
       justify-content: flex-start;

@@ -32,27 +32,14 @@ const getters = {
 };
 
 const actions = {
-  async fetchImages({ commit, rootState, state }) {
+  async fetchImages({ commit, rootState }) {
     try {
       const { apiUrl } = rootState.settings;
-      const query = { page: state.page };
-      const images = await api.fetchImages({ apiUrl, query });
+      const images = await api.fetchImages({ apiUrl });
       commit('setImages', images);
       commit('setError', null);
     } catch (err) {
       commit('setError', err);
-    }
-  },
-  nextPage({ commit, dispatch, state }) {
-    if (state.images.length === 10) {
-      commit('setPage', state.page + 1);
-      dispatch('fetchImages');      
-    }
-  },
-  previousPage({ commit, dispatch, state }) {
-    if (state.page > 1) {
-      commit('setPage', state.page - 1);
-      dispatch('fetchImages');      
     }
   },
   async uploadImages({ commit, rootState }, formData) {
@@ -142,6 +129,7 @@ const actions = {
     commit('setImageDeleteMode', true);
   },
   disableImageDeleteMode({ commit }) {
+    commit('setImagesChecked', []);
     commit('setImageDeleteMode', false);
   },
   selectImage({ commit }, image) {

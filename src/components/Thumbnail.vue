@@ -1,6 +1,8 @@
 <template>
   <div class="Thumbnail" @mouseenter="active = true" @mouseleave="active = false">
-    <img v-if="thumbnail" class="Thumbnail__img"
+    <img v-if="thumbnail"
+      loading="lazy"
+      class="Thumbnail__img"
       :src="thumbnail"
       :alt="data.caption"
     />

@@ -19,7 +19,7 @@
               <i class="lock icon"></i>
               <input type="password"
                 v-model="password"
-                placeholder="Hasło  ( 8 - 24 znaków )"
+                placeholder="Hasło"
                 @keydown="handleKeyDown"
               >
             </div>
