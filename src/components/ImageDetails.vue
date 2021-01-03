@@ -28,7 +28,12 @@
           <i class="calendar icon"></i> {{imageCreatedAt}}
         </div>
         <div v-if="imageLocation" class="ImageDetails__detail">
-          <i class="map marker alternate icon"></i> {{imageLocation}}
+          <a
+            :href="`https://google.com/maps/place/${imageLocation}`"
+            target="_blank"
+          >
+            <i class="map marker alternate icon"></i> {{imageLocation}}
+          </a>
         </div>
       </div>
     </figure>
