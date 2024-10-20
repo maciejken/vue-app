@@ -9,7 +9,7 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "cookie": "^0.4.1",
+    "cookie": "^1.0.1",
     "core-js": "^3.6.4",
     "fast-diff": "^1.2.0",
     "jwt-decode": "^2.2.0",
